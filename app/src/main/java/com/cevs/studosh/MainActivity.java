@@ -1,8 +1,11 @@
 package com.cevs.studosh;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,9 +15,30 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
+
+import com.cevs.studosh.data.DBHelper;
+import com.cevs.studosh.data.DataBaseManager;
+import com.cevs.studosh.data.model.Course;
+import com.cevs.studosh.data.repo.CourseRepo;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    CourseRepo mCourseRepo;
+    android.support.v4.app.FragmentManager supportFragmentManager;
+    CourseRepo courseRepo;
+    String[] fromFieldNames;
+    String[] menuItems;
+    SimpleCursorAdapter simpleCursorAdapter;
+    Cursor cursor;
+    long item_id;
+
+    private ViewPager mViewPager;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,14 +47,20 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+        DBHelper dbHelper = new DBHelper(this);
+        DataBaseManager.initializeInstance(dbHelper);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                DialogHelper mDialogHelper = new DialogHelper(getBaseContext(), getFragmentManager());
+                mDialogHelper.setCourseDialog();
             }
         });
+
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -40,6 +70,19 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        populateList();
+    }
+
+    public void populateList(){
+        mCourseRepo = new CourseRepo();
+        cursor = mCourseRepo.getAllRows();
+        fromFieldNames = new String[]{Course.COLUMN_CourseName};
+        int[] toViewIds= new int[]{R.id.textView_course_name};
+        simpleCursorAdapter = new SimpleCursorAdapter(getBaseContext(),R.layout.course_item, cursor,fromFieldNames,toViewIds,0);
+        ListView list = (ListView)findViewById(R.id.course_list);
+        list.setAdapter(simpleCursorAdapter);
+
     }
 
     @Override
@@ -51,6 +94,7 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

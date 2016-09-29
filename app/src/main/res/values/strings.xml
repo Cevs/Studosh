@@ -5,4 +5,16 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <string-array name="menuItems">
+        <item>Delete</item>
+        <item>Delete All</item>
+        <item>Update</item>
+    </string-array>
+
+    <string-array name="tabs">
+        <item>Generally</item>
+        <item>Criteria</item>
+        <item>Presence</item>
+    </string-array>
 </resources>
