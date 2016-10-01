@@ -1,11 +1,13 @@
 package com.cevs.studosh;
 
+import android.app.FragmentManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.view.ContextMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,7 +17,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.cevs.studosh.data.DBHelper;
 import com.cevs.studosh.data.DataBaseManager;
@@ -29,12 +33,13 @@ public class MainActivity extends AppCompatActivity
 
     CourseRepo mCourseRepo;
     android.support.v4.app.FragmentManager supportFragmentManager;
+    FragmentManager fragmentManager;
     CourseRepo courseRepo;
     String[] fromFieldNames;
     String[] menuItems;
     SimpleCursorAdapter simpleCursorAdapter;
     Cursor cursor;
-    long item_id;
+    long itemId;
 
     private ViewPager mViewPager;
 
@@ -51,11 +56,13 @@ public class MainActivity extends AppCompatActivity
         DBHelper dbHelper = new DBHelper(this);
         DataBaseManager.initializeInstance(dbHelper);
 
+        fragmentManager = getFragmentManager();
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogHelper mDialogHelper = new DialogHelper(getBaseContext(), getFragmentManager());
+                DialogHelper mDialogHelper = new DialogHelper(getBaseContext(), fragmentManager);
                 mDialogHelper.setCourseDialog();
             }
         });
@@ -82,6 +89,7 @@ public class MainActivity extends AppCompatActivity
         simpleCursorAdapter = new SimpleCursorAdapter(getBaseContext(),R.layout.course_item, cursor,fromFieldNames,toViewIds,0);
         ListView list = (ListView)findViewById(R.id.course_list);
         list.setAdapter(simpleCursorAdapter);
+        registerForContextMenu(list);
 
     }
 
@@ -95,6 +103,51 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        if (v.getId()==R.id.course_list){
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+            String title = cursor.getString(cursor.getColumnIndex(Course.COLUMN_CourseName));
+            menu.setHeaderTitle(title);
+
+            itemId = info.id;
+
+            menuItems = getResources().getStringArray(R.array.menuItems);
+            for (int i = 0;i<menuItems.length;i++){
+                menu.add(menuItems[i]);
+            }
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        courseRepo = new CourseRepo();
+        String option = item.getTitle().toString();
+        String courseName = cursor.getString(cursor.getColumnIndex(Course.COLUMN_CourseName));
+        String courseSemester = cursor.getString(cursor.getColumnIndex(Course.COLUMN_Semester));
+        Toast.makeText(getBaseContext(),courseName+"",Toast.LENGTH_SHORT).show();
+
+
+        switch(option){
+            case "Delete":
+                courseRepo.deleteRow(itemId);
+                populateList();
+                Toast.makeText(getBaseContext(),courseName + " Deleted", Toast.LENGTH_SHORT).show();
+                populateList();
+                break;
+            case "Delete All":
+                courseRepo.deleteAllRows();
+                populateList();
+                Toast.makeText(getBaseContext(),"All items deleted",Toast.LENGTH_SHORT).show();
+                break;
+            case "Update":
+                UpdateCourseDialog mUpdateCourseDialog = UpdateCourseDialog.newInstance(courseName,courseSemester,itemId);
+                mUpdateCourseDialog.show(fragmentManager,"Update course");
+                Toast.makeText(getBaseContext(),courseName + " Updated", Toast.LENGTH_SHORT).show();
+                break;
+        }
+        return true;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

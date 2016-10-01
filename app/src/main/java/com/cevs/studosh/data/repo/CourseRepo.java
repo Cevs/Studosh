@@ -72,13 +72,20 @@ public class CourseRepo {
         return c;
     }
 
-    public boolean updateRow(long rowId){
+    public boolean updateRow(long rowId, Course course){
         SQLiteDatabase db= DataBaseManager.getInstance().openDatabase();
         String where = Course.COLUMN_CourseId + " = " + rowId;
         ContentValues newValues = new ContentValues();
         newValues.put(Course.COLUMN_CourseName, course.getCourseName());
         newValues.put(Course.COLUMN_Semester, course.getSemester());
 
-        return db.update(Course.TABLE_Name, newValues, where, null)!=0;
+        if(db.update(Course.TABLE_Name,newValues, where, null)==-1){
+            DataBaseManager.getInstance().closeDatabase();
+            return false;
+        }
+        else{
+            DataBaseManager.getInstance().closeDatabase();
+            return true;
+        }
     }
 }
