@@ -4,7 +4,6 @@ import android.app.FragmentManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.ContextMenu;
@@ -21,10 +20,18 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.cevs.studosh.InitialFragments.InitialCriteriaFragment;
+import com.cevs.studosh.InitialFragments.InitialGeneralFragment;
+import com.cevs.studosh.InitialFragments.InitialPresenceFragment;
 import com.cevs.studosh.data.DBHelper;
 import com.cevs.studosh.data.DataBaseManager;
 import com.cevs.studosh.data.model.Course;
 import com.cevs.studosh.data.repo.CourseRepo;
+import com.cevs.studosh.fragments.CriteriaFragment;
+import com.cevs.studosh.fragments.GeneralFragment;
+import com.cevs.studosh.fragments.PagerItem;
+import com.cevs.studosh.fragments.PresenceFragment;
+import com.gigamole.navigationtabstrip.NavigationTabStrip;
 
 import java.util.ArrayList;
 
@@ -41,7 +48,12 @@ public class MainActivity extends AppCompatActivity
     Cursor cursor;
     long itemId;
 
+    MyPagerAdapter mPagerAdapter;
+    GeneralFragment generalFragment;
+    ArrayList<PagerItem> pagerItems;
+
     private ViewPager mViewPager;
+    private NavigationTabStrip mCenterNavigationTabStrip;
 
 
 
@@ -57,6 +69,21 @@ public class MainActivity extends AppCompatActivity
         DataBaseManager.initializeInstance(dbHelper);
 
         fragmentManager = getFragmentManager();
+        supportFragmentManager = getSupportFragmentManager();
+        //promjenit
+        pagerItems = new ArrayList<PagerItem>();
+        pagerItems.add(new PagerItem("General fragment", new InitialGeneralFragment()));
+        pagerItems.add(new PagerItem("Criteria fragment", new InitialCriteriaFragment()));
+        pagerItems.add(new PagerItem("Absence fragment", new InitialPresenceFragment()));
+
+        mViewPager = (ViewPager) findViewById(R.id.vp);
+        mPagerAdapter = new MyPagerAdapter(supportFragmentManager,pagerItems);
+        mViewPager.setAdapter(mPagerAdapter);
+        mCenterNavigationTabStrip = (NavigationTabStrip) findViewById(R.id.nts_center);
+        mCenterNavigationTabStrip.setViewPager(mViewPager);
+
+        mPagerAdapter.setPagerItems(pagerItems);
+        mPagerAdapter.notifyDataSetChanged();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -66,7 +93,6 @@ public class MainActivity extends AppCompatActivity
                 mDialogHelper.setCourseDialog();
             }
         });
-
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -90,6 +116,21 @@ public class MainActivity extends AppCompatActivity
         ListView list = (ListView)findViewById(R.id.course_list);
         list.setAdapter(simpleCursorAdapter);
         registerForContextMenu(list);
+
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                pagerItems = new ArrayList<PagerItem>();
+                pagerItems.add(new PagerItem("General fragment",generalFragment.newInstance(l)));
+                pagerItems.add(new PagerItem("Criteria fragment", new CriteriaFragment()));
+                pagerItems.add(new PagerItem("Absence fragment", new PresenceFragment()));
+
+
+                mPagerAdapter.setPagerItems(pagerItems);
+                mPagerAdapter.notifyDataSetChanged();
+
+            }
+        });
 
     }
 

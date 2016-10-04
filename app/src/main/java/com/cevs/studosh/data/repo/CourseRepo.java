@@ -3,6 +3,7 @@ package com.cevs.studosh.data.repo;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.provider.ContactsContract;
 
 import com.cevs.studosh.data.DataBaseManager;
 import com.cevs.studosh.data.model.Course;
@@ -69,6 +70,19 @@ public class CourseRepo {
             c.moveToFirst();
         }
         DataBaseManager.getInstance().closeDatabase();
+        return c;
+    }
+
+    public Cursor getRow(long rowId){
+        SQLiteDatabase db = DataBaseManager.getInstance().openDatabase();
+        String where = Course.COLUMN_CourseId + " = " + rowId;
+        Cursor c = db.query(true, Course.TABLE_Name,Course.ALL_ROWS, where, null,null,null,null,null);
+
+        if(c!=null){
+            c.moveToFirst();
+        }
+        DataBaseManager.getInstance().closeDatabase();
+
         return c;
     }
 
