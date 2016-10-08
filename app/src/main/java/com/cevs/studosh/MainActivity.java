@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity
 
     MyPagerAdapter mPagerAdapter;
     GeneralFragment generalFragment;
+    CriteriaFragment criteriaFragment;
+    PresenceFragment presenceFragment;
     ArrayList<PagerItem> pagerItems;
 
     private ViewPager mViewPager;
@@ -64,6 +66,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //Ovo je stavljeno tu tako da se fragment manager odma prosljedi Dailogu helperu da ne bude crashova
+        DialogHelper mDialogHelepr = new DialogHelper(getBaseContext(),getFragmentManager());
 
         DBHelper dbHelper = new DBHelper(this);
         DataBaseManager.initializeInstance(dbHelper);
@@ -122,8 +126,8 @@ public class MainActivity extends AppCompatActivity
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 pagerItems = new ArrayList<PagerItem>();
                 pagerItems.add(new PagerItem("General fragment",generalFragment.newInstance(l)));
-                pagerItems.add(new PagerItem("Criteria fragment", new CriteriaFragment()));
-                pagerItems.add(new PagerItem("Absence fragment", new PresenceFragment()));
+                pagerItems.add(new PagerItem("Criteria fragment", criteriaFragment.newInstance(l)));
+                pagerItems.add(new PagerItem("Absence fragment", presenceFragment.newInstance(l)));
 
 
                 mPagerAdapter.setPagerItems(pagerItems);

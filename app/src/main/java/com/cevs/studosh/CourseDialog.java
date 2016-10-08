@@ -46,7 +46,6 @@ public class CourseDialog extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
-                DataBaseManager.getInstance().openDatabase();
                 course = new Course();
                 CourseRepo courseRepo = new CourseRepo();
 
@@ -78,6 +77,7 @@ public class CourseDialog extends DialogFragment {
                     if (v!= null) v.setGravity(Gravity.CENTER);
                     toast.show();
                 }
+
             }
         });
 
@@ -90,7 +90,7 @@ public class CourseDialog extends DialogFragment {
         });
 
         Dialog dialog = builder.create();
-        DataBaseManager.getInstance().closeDatabase();
+
         return dialog;
     }
 }

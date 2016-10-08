@@ -10,14 +10,13 @@ public class Course {
     public static final String COLUMN_CourseId = "_id";
     public static final String COLUMN_CourseName = "CourseName";
     public static final String COLUMN_Semester = "Semester";
-    //public static final String COLUMN_MaxPoints = "MaxPoints";
-    public static final String[] ALL_ROWS = {Course.COLUMN_CourseId,Course.COLUMN_CourseName, Course.COLUMN_Semester};
+    public static final String[] ALL_ROWS = {COLUMN_CourseId, COLUMN_CourseName, COLUMN_Semester};
 
-    private  int courseId;
+    private  long courseId;
     private String name;
     private String semester;
 
-    public int getCourseId(){return courseId;}
+    public long getCourseId(){return courseId;}
 
     public void setCourseId(int courseId){this.courseId = courseId;}
 

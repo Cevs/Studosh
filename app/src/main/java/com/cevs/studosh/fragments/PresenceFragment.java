@@ -17,6 +17,22 @@ import com.cevs.studosh.R;
 
 public class PresenceFragment extends Fragment {
     View view;
+    private long courseId;
+
+    public static PresenceFragment newInstance(long id){
+        PresenceFragment fragment = new PresenceFragment();
+        Bundle args = new Bundle();
+        args.putLong("Id",id);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        courseId = getArguments().getLong("Id");
+
+    }
 
     @Nullable
     @Override

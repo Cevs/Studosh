@@ -10,10 +10,16 @@ import android.content.Context;
 public class DialogHelper {
     static FragmentManager fragmentManager;
     Context context;
+    long courseId;
 
     public DialogHelper(Context context, FragmentManager fragmentManager) {
         this.context = context;
         this.fragmentManager = fragmentManager;
+    }
+
+    public DialogHelper(Context context, long courseId){
+        this.context = context;
+        this.courseId = courseId;
     }
 
     public void setCourseDialog(){
@@ -22,6 +28,10 @@ public class DialogHelper {
     }
 
     public void setContentDialog(){
+        ContentDialog mContentDialog;
+        //dodan context
+        mContentDialog = ContentDialog.newInstance(courseId);
+        mContentDialog.show(fragmentManager,"ContentDialog");
 
     }
 

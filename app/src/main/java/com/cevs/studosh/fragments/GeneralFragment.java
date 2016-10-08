@@ -46,18 +46,8 @@ public class GeneralFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (view != null){
-            ViewGroup parent = (ViewGroup) view.getParent();
-            if (parent !=null){
-                parent.removeView(view);
-            }
-        }
 
-        try{
-            view = inflater.inflate(R.layout.fragment_general,container,false);
-        }catch (InflateException e){
-            Toast.makeText(getContext(),e+"",Toast.LENGTH_LONG).show();
-        }
+        view = inflater.inflate(R.layout.fragment_general,container,false);
 
         name = (TextView) view.findViewById(R.id.tvFragment_courseName);
         semester = (TextView) view.findViewById(R.id.tvFragment_semester);
@@ -70,7 +60,6 @@ public class GeneralFragment extends Fragment {
             name.setText("None");
             semester.setText("None");
         }else {
-            //Vraca index out of bound jer sam obriso prvi element sa idom 0 pa pretraga baze ne vraca ni jedan red
 
             String courseName = cursor.getString(cursor.getColumnIndex(Course.COLUMN_CourseName));
             String courseSemester = cursor.getString(cursor.getColumnIndex(Course.COLUMN_Semester));
@@ -79,7 +68,7 @@ public class GeneralFragment extends Fragment {
             name.setText(courseName);
             semester.setText(courseSemester);
         }
-
+        cursor.close();
         return view;
     }
 

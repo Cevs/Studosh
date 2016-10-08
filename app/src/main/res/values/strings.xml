@@ -6,6 +6,11 @@
 
     <string name="action_settings">Settings</string>
 
+    <string name="cNo">cNo</string>
+    <string name="criteria">criteria</string>
+    <string name="points">points</string>
+    <string name="maxPoints">maxPoints</string>
+
     <string-array name="menuItems">
         <item>Delete</item>
         <item>Delete All</item>

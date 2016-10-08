@@ -14,7 +14,6 @@ import com.cevs.studosh.data.model.Course;
 
 public class CourseRepo {
 
-    private Course course;
 
     public static String createTable(){
         return "CREATE TABLE " + Course.TABLE_Name + "("
@@ -102,4 +101,5 @@ public class CourseRepo {
             return true;
         }
     }
+
 }
