@@ -17,7 +17,7 @@ import com.cevs.studosh.data.repo.CourseRepo;
 
 public class DBHelper  extends SQLiteOpenHelper{
 
-    private static final int DATABASE_VERSION =4 ;
+    private static final int DATABASE_VERSION =5 ;
     private static final String DATABASE_NAME= "studoshDB.db";
     private Context context;
 
@@ -33,6 +33,7 @@ public class DBHelper  extends SQLiteOpenHelper{
         try{
             db.execSQL(CourseRepo.createTable());
             db.execSQL(ContentRepo.createTable());
+            db.execSQL("PRAGMA foreign_keys=ON");
 
         }catch(SQLException e){
             Toast.makeText(context, e+"", Toast.LENGTH_LONG).show();

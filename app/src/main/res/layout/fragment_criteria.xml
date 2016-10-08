@@ -6,7 +6,44 @@
         android:id="@+id/list_criteria"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="135dp"
+        android:layout_marginTop="199dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="#"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="170dp"
+        android:id="@+id/textView4" />
+
+    <TextView
+        android:text="Kriterij"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textView4"
+        android:layout_toEndOf="@+id/textView4"
+        android:layout_marginStart="51dp"
+        android:id="@+id/textView5" />
+
+    <TextView
+        android:text="bodovi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textView5"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/textView6"
+        android:layout_alignTop="@+id/textView5" />
+
+    <TextView
+        android:text="Maksimalno"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textView6"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="11dp"
+        android:id="@+id/textView7" />
+
 </RelativeLayout>

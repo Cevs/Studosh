@@ -58,7 +58,7 @@ public class MyCriteriaListAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         LayoutInflater inflater = (LayoutInflater) adapterContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if (array.get(i).getCourseId()==-1){
+        if (array.get(i).getContentId()==-1){
             rowView = inflater.inflate(R.layout.listview_row_criterria_button,viewGroup,false);
             Button button = (Button) rowView.findViewById(R.id.button_listView_criteriaAdd);
 

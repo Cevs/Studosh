@@ -10,8 +10,8 @@ public class Content {
     public static final String COLUMN_Criteria = "Criteria";
     public static final String COLUMN_Points = "Points";
     public static final String COLUMN_MaxPoints ="MaxPoints";
-    public static final String COLUMN_CourseId = "CourseId";
-    public static final String[] ALL_ROWS = {COLUMN_CourseId, COLUMN_Criteria, COLUMN_Points, COLUMN_MaxPoints, COLUMN_CourseId};
+    public static final String COLUMN_fk_CourseId = "CourseId";
+    public static final String[] ALL_ROWS = {COLUMN_ContentId, COLUMN_Criteria, COLUMN_Points, COLUMN_MaxPoints, COLUMN_fk_CourseId};
 
 
     private long id;

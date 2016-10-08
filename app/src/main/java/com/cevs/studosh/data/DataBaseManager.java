@@ -34,6 +34,7 @@ public class DataBaseManager {
         mOpenCounter += 1;
         if (mOpenCounter == 1) {
             mDatabase = mDatabaseHelper.getWritableDatabase();
+            mDatabase.execSQL("PRAGMA foreign_keys=ON");
         }
         return mDatabase;
     }

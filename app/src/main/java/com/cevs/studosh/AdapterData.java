@@ -3,6 +3,7 @@ package com.cevs.studosh;
 import android.content.Context;
 import android.database.Cursor;
 import android.view.View;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import com.cevs.studosh.data.model.Content;
@@ -39,6 +40,7 @@ public class AdapterData {
         listView = (ListView)view.findViewById(R.id.list_criteria);
         items = getData();
         myCriteriaListAdapter = new MyCriteriaListAdapter(items,context);
+        listView.setAdapter(myCriteriaListAdapter);
         myCriteriaListAdapter.notifyDataSetChanged();
         listView.setAdapter(myCriteriaListAdapter);
 
@@ -51,23 +53,29 @@ public class AdapterData {
         cursor = contentRepo.getRows(courseId);
 
         cursor.moveToFirst();
-
-        if(cursor.getCount()!=0) {
-            while (cursor.isAfterLast()) {
+        int n = cursor.getCount();
+        if(n != 0) {
+            while (cursor.isAfterLast() == false) {
                 content = new Content();
                 content.setCriteria(cursor.getString(cursor.getColumnIndex(Content.COLUMN_Criteria)));
                 content.setPoints(cursor.getDouble(cursor.getColumnIndex(Content.COLUMN_MaxPoints)));
                 content.setMaxPoints(cursor.getDouble(cursor.getColumnIndex(Content.COLUMN_MaxPoints)));
-                content.setCourseId(courseId);
+                content.setCourseId(cursor.getLong(cursor.getColumnIndex(Content.COLUMN_fk_CourseId)));
+                //content.setCourseId(courseId);
 
                 cursor.moveToNext();
 
                 items.add(content);
+
             }
         }
+        int m = items.size();
         cursor.close();
         content = new Content();
-        content.setCourseId(-1);
+        content.setContentId(-1);
+        content.setPoints(-1);
+        content.setMaxPoints(-1);
+        content.setCourseId(courseId);
         items.add(content);
 
         return items;

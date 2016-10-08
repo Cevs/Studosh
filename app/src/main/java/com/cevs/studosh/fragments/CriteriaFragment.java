@@ -94,7 +94,7 @@ public class CriteriaFragment extends Fragment {
         myCriteriaListAdapter = new MyCriteriaListAdapter(arrayList,getActivity());
         lv.setAdapter(myCriteriaListAdapter);*/
 
-
+        long ID = courseId;
         AdapterData adapterData = new AdapterData(view, getActivity(), courseId);
         adapterData.init();
 

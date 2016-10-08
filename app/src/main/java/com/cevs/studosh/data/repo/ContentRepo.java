@@ -20,7 +20,9 @@ public class ContentRepo {
                 + Content.COLUMN_Criteria + " TEXT, "
                 + Content.COLUMN_Points + " REAL, "
                 + Content.COLUMN_MaxPoints + " REAL, "
-                + Content.COLUMN_CourseId + " INTEGER);";
+                + Content.COLUMN_fk_CourseId + " INTEGER, "
+                + "FOREIGN KEY ("+Content.COLUMN_fk_CourseId + ") REFERENCES "
+                + Course.TABLE_Name + "(" + Course.COLUMN_CourseId +") ON DELETE CASCADE );";
     }
 
     public long insertRow(Content content){
@@ -30,7 +32,7 @@ public class ContentRepo {
         values.put(Content.COLUMN_Criteria, content.getCriteria());
         values.put(Content.COLUMN_Points, content.getPoints());
         values.put(Content.COLUMN_MaxPoints, content.getMaxPoints());
-        values.put(Content.COLUMN_CourseId, content.getCourseId());
+        values.put(Content.COLUMN_fk_CourseId, content.getCourseId());
 
         contentId = db.insert(Content.TABLE_Name,null,values);
         DataBaseManager.getInstance().closeDatabase();
@@ -66,7 +68,7 @@ public class ContentRepo {
 
     public Cursor getRows(long id){
         SQLiteDatabase db = DataBaseManager.getInstance().openDatabase();
-        String where = Content.COLUMN_CourseId + " = " + id;
+        String where = Content.COLUMN_fk_CourseId + " = " + id;
         Cursor c = db.query(true,Content.TABLE_Name,Content.ALL_ROWS,where,null,null,null,null,null);
         if (c!=null){
             c.moveToFirst();
@@ -93,7 +95,7 @@ public class ContentRepo {
         newValues.put(Content.COLUMN_Criteria, content.getCriteria());
         newValues.put(Content.COLUMN_Points, content.getPoints());
         newValues.put(Content.COLUMN_MaxPoints, content.getMaxPoints());
-        newValues.put(Content.COLUMN_CourseId, content.getCourseId());
+        newValues.put(Content.COLUMN_fk_CourseId, content.getCourseId());
 
         if(db.update(Content.TABLE_Name,newValues, where, null)==-1){
             DataBaseManager.getInstance().closeDatabase();
