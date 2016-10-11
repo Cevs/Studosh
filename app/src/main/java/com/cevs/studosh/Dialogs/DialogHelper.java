@@ -1,7 +1,10 @@
-package com.cevs.studosh;
+package com.cevs.studosh.Dialogs;
 
 import android.app.FragmentManager;
 import android.content.Context;
+
+import com.cevs.studosh.Dialogs.ContentDialog;
+import com.cevs.studosh.Dialogs.CourseDialog;
 
 /**
  * Created by TOSHIBA on 28.09.2016..
@@ -11,6 +14,7 @@ public class DialogHelper {
     static FragmentManager fragmentManager;
     Context context;
     long courseId;
+
 
     public DialogHelper(Context context, FragmentManager fragmentManager) {
         this.context = context;
@@ -22,6 +26,8 @@ public class DialogHelper {
         this.courseId = courseId;
     }
 
+    public DialogHelper(){}
+
     public void setCourseDialog(){
         CourseDialog mCourseDialog = new CourseDialog();
         mCourseDialog.show(fragmentManager, "CourseDialog");
@@ -29,10 +35,15 @@ public class DialogHelper {
 
     public void setContentDialog(){
         ContentDialog mContentDialog;
-        //dodan context
         mContentDialog = ContentDialog.newInstance(courseId);
         mContentDialog.show(fragmentManager,"ContentDialog");
 
+    }
+
+    public void setUpdateContentDialog(String criterion, long rowId){
+        UpdateContentDialog mUpdateContentDialog;
+        mUpdateContentDialog = UpdateContentDialog.newInstance(criterion,rowId);
+        mUpdateContentDialog.show(fragmentManager,"UpdateContentDialog");
     }
 
 

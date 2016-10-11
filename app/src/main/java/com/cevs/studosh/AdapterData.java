@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.cevs.studosh.data.model.Content;
 import com.cevs.studosh.data.repo.ContentRepo;
@@ -36,6 +37,7 @@ public class AdapterData {
         this.context = context;
         this.courseId = courseId;
     }
+
     public void init(){
         listView = (ListView)view.findViewById(R.id.list_criteria);
         items = getData();
@@ -43,7 +45,6 @@ public class AdapterData {
         listView.setAdapter(myCriteriaListAdapter);
         myCriteriaListAdapter.notifyDataSetChanged();
         listView.setAdapter(myCriteriaListAdapter);
-
 
     }
 
@@ -58,10 +59,9 @@ public class AdapterData {
             while (cursor.isAfterLast() == false) {
                 content = new Content();
                 content.setCriteria(cursor.getString(cursor.getColumnIndex(Content.COLUMN_Criteria)));
-                content.setPoints(cursor.getDouble(cursor.getColumnIndex(Content.COLUMN_MaxPoints)));
+                content.setPoints(cursor.getDouble(cursor.getColumnIndex(Content.COLUMN_Points)));
                 content.setMaxPoints(cursor.getDouble(cursor.getColumnIndex(Content.COLUMN_MaxPoints)));
                 content.setCourseId(cursor.getLong(cursor.getColumnIndex(Content.COLUMN_fk_CourseId)));
-                //content.setCourseId(courseId);
 
                 cursor.moveToNext();
 

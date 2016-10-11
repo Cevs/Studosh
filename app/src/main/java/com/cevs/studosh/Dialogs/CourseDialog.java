@@ -1,4 +1,4 @@
-package com.cevs.studosh;
+package com.cevs.studosh.Dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -13,6 +13,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cevs.studosh.MainActivity;
+import com.cevs.studosh.R;
 import com.cevs.studosh.data.DataBaseManager;
 import com.cevs.studosh.data.model.Course;
 import com.cevs.studosh.data.repo.CourseRepo;
@@ -64,9 +66,11 @@ public class CourseDialog extends DialogFragment {
                 name = courseName.getText().toString();
                 if ((!TextUtils.isEmpty((name)))&&(bsemester)){
                     course.setCourseName(name);
-                    if (courseRepo.insertRow(course) !=-1){
+                    long courseId = courseRepo.insertRow(course);
+                    if (courseId!=-1){
                         Toast.makeText(getActivity(),"Course was added", Toast.LENGTH_SHORT).show();
                         ((MainActivity)getActivity()).populateList();
+                        ((MainActivity)getActivity()).setFragments(courseId);
                     }
                     else
                         Toast.makeText(getActivity(),"Failed to add Course", Toast.LENGTH_SHORT).show();

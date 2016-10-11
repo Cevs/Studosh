@@ -1,4 +1,4 @@
-package com.cevs.studosh;
+package com.cevs.studosh.Dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -10,6 +10,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.cevs.studosh.AdapterData;
+import com.cevs.studosh.MainActivity;
+import com.cevs.studosh.R;
 import com.cevs.studosh.data.DataBaseManager;
 import com.cevs.studosh.data.model.Course;
 import com.cevs.studosh.data.repo.CourseRepo;
@@ -18,13 +21,17 @@ import com.cevs.studosh.data.repo.CourseRepo;
  * Created by TOSHIBA on 01.10.2016..
  */
 
-public class UpdateCourseDialog extends DialogFragment {
+public class UpdateCourseDialog extends android.support.v4.app.DialogFragment {
     String courseName;
     String courseSemester;
     Long itemId;
     Dialog dialog;
     LayoutInflater inflater;
     View view;
+    CourseRepo courseRepo;
+    Course course;
+    EditText editName;
+    EditText editSemester;
 
     public UpdateCourseDialog(){}
 
@@ -51,19 +58,18 @@ public class UpdateCourseDialog extends DialogFragment {
         builder.setView(view);
         builder.setTitle("Update Course");
 
-        final EditText editName = (EditText) view.findViewById(R.id.editText_update_name);
-        final EditText editSemester = (EditText) view.findViewById(R.id.editText_update_semester);
+        editName = (EditText) view.findViewById(R.id.editText_update_name);
+        editSemester = (EditText) view.findViewById(R.id.editText_update_semester);
 
         editName.setText(courseName);
         editSemester.setText(courseSemester);
 
-        DataBaseManager.getInstance().openDatabase();
-        final CourseRepo courseRepo = new CourseRepo();
-        final Course course = new Course();
 
         builder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                courseRepo = new CourseRepo();
+                course = new Course();
                 courseName = editName.getText().toString();
                 courseSemester = editSemester.getText().toString();
                 course.setCourseName(courseName);
@@ -74,6 +80,8 @@ public class UpdateCourseDialog extends DialogFragment {
                     Toast.makeText(getActivity(),e+"",Toast.LENGTH_LONG).show();
                 }
                 ((MainActivity)getActivity()).populateList();
+                ((MainActivity)getActivity()).setFragments(itemId);
+
             }
         });
 
@@ -84,7 +92,6 @@ public class UpdateCourseDialog extends DialogFragment {
             }
         });
 
-        DataBaseManager.getInstance().closeDatabase();
         dialog = builder.create();
         return dialog;
     }

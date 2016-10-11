@@ -1,19 +1,16 @@
 package com.cevs.studosh;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.cevs.studosh.Dialogs.DialogHelper;
 import com.cevs.studosh.data.model.Content;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -66,8 +63,6 @@ public class MyCriteriaListAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View view) {
 
-                    //array.get(0).getCourseId - GREŠKA
-                    //Vanjski kljucevi krvo napravljeni
                     DialogHelper mDialogHelper = new DialogHelper(adapterContext, array.get(0).getCourseId());
                     mDialogHelper.setContentDialog();
                 }
@@ -82,7 +77,8 @@ public class MyCriteriaListAdapter extends BaseAdapter {
             TextView pointsTv = (TextView) rowView.findViewById(R.id.tV_listView_points);
             TextView maxPointsTv = (TextView) rowView.findViewById(R.id.tV_listView_maxPoints);
 
-            numberTv.setText(i+"");
+            //i-position (starts with 0)
+            numberTv.setText(i+1+"");
             criteriaTv.setText(array.get(i).getCriteria());
             pointsTv.setText(array.get(i).getPoints()+"");
             maxPointsTv.setText(array.get(i).getMaxPoints()+"");

@@ -55,19 +55,14 @@ public class GeneralFragment extends Fragment {
         courseRepo = new CourseRepo();
         cursor = courseRepo.getRow(courseId);
 
-        if (cursor.getCount()==0){
 
-            name.setText("None");
-            semester.setText("None");
-        }else {
-
-            String courseName = cursor.getString(cursor.getColumnIndex(Course.COLUMN_CourseName));
-            String courseSemester = cursor.getString(cursor.getColumnIndex(Course.COLUMN_Semester));
+        String courseName = cursor.getString(cursor.getColumnIndex(Course.COLUMN_CourseName));
+        String courseSemester = cursor.getString(cursor.getColumnIndex(Course.COLUMN_Semester));
 
 
-            name.setText(courseName);
-            semester.setText(courseSemester);
-        }
+        name.setText(courseName);
+        semester.setText(courseSemester);
+
         cursor.close();
         return view;
     }

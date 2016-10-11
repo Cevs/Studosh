@@ -45,25 +45,39 @@ public class ContentRepo {
         DataBaseManager.getInstance().closeDatabase();
     }
 
-    public boolean deleteRow(long rowId){
+
+    public boolean deleteRow(String criterion, long rowId){
         SQLiteDatabase db = DataBaseManager.getInstance().openDatabase();
-        String where = Content.COLUMN_ContentId + " = " + rowId;
-        int b  = db.delete(Content.TABLE_Name, where, null);
+        String where = Content.COLUMN_Criteria + " = '" + criterion + "' AND " + Content.COLUMN_fk_CourseId
+                + " = " + rowId;
+        int b  = db.delete(Content.TABLE_Name,where,null);
         DataBaseManager.getInstance().closeDatabase();
-        if (b != -1)
-            return  true;
-        return  false;
+        if (b!=-1)
+            return true;
+        return false;
     }
 
-    public void deleteAllRows(){
-        Cursor c = getAllRows();
-        long rowId =c.getColumnIndexOrThrow(Content.COLUMN_ContentId);
+    public void deleteAllRows(long courseId){
+        Cursor c = getAllRows(courseId);
+
         if (c.moveToFirst()){
             do{
-                deleteRow(c.getLong((int)rowId));
-            }while(c.moveToFirst());
+                String criterion  = c.getString(c.getColumnIndexOrThrow(Content.COLUMN_Criteria));
+                deleteRow(criterion,courseId);
+            }while(c.moveToNext());
         }
         c.close();
+    }
+
+    public Cursor getRow(long id, String criterion){
+        SQLiteDatabase db = DataBaseManager.getInstance().openDatabase();
+        String where = Content.COLUMN_Criteria + " = '" + criterion + "' AND "
+                + Content.COLUMN_fk_CourseId + " = " + id;
+        Cursor c = db.query(true,Content.TABLE_Name,Content.ALL_ROWS,where,null,null,null,null,null);
+        c.moveToFirst();
+        DataBaseManager.getInstance().closeDatabase();
+        return c;
+
     }
 
     public Cursor getRows(long id){
@@ -77,9 +91,9 @@ public class ContentRepo {
         return c;
     }
 
-    public Cursor getAllRows(){
+    public Cursor getAllRows(long courseId){
         SQLiteDatabase db = DataBaseManager.getInstance().openDatabase();
-        String where = null;
+        String where = Content.COLUMN_fk_CourseId + " = " + courseId;
         Cursor c = db.query(true,Content.TABLE_Name,Content.ALL_ROWS, where, null, null, null, null, null, null);
         if (c!=null){
             c.moveToFirst();
@@ -88,9 +102,12 @@ public class ContentRepo {
         return c;
     }
 
-    public boolean updateRow(long rowId, Content content){
+    public boolean updateRow(String title, Content content){
+        String criterion = title;
+        long courseId = content.getCourseId();
         SQLiteDatabase db = DataBaseManager.getInstance().openDatabase();
-        String where = Content.COLUMN_ContentId + " = " + rowId;
+        String where = Content.COLUMN_Criteria + " = '" + criterion + "' AND " + Content.COLUMN_fk_CourseId
+                + " = " + courseId;
         ContentValues newValues = new ContentValues();
         newValues.put(Content.COLUMN_Criteria, content.getCriteria());
         newValues.put(Content.COLUMN_Points, content.getPoints());

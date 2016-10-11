@@ -20,6 +20,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.cevs.studosh.Dialogs.DialogHelper;
+import com.cevs.studosh.Dialogs.UpdateCourseDialog;
 import com.cevs.studosh.InitialFragments.InitialCriteriaFragment;
 import com.cevs.studosh.InitialFragments.InitialGeneralFragment;
 import com.cevs.studosh.InitialFragments.InitialPresenceFragment;
@@ -80,14 +82,7 @@ public class MainActivity extends AppCompatActivity
         pagerItems.add(new PagerItem("Criteria fragment", new InitialCriteriaFragment()));
         pagerItems.add(new PagerItem("Absence fragment", new InitialPresenceFragment()));
 
-        mViewPager = (ViewPager) findViewById(R.id.vp);
-        mPagerAdapter = new MyPagerAdapter(supportFragmentManager,pagerItems);
-        mViewPager.setAdapter(mPagerAdapter);
-        mCenterNavigationTabStrip = (NavigationTabStrip) findViewById(R.id.nts_center);
-        mCenterNavigationTabStrip.setViewPager(mViewPager);
-
-        mPagerAdapter.setPagerItems(pagerItems);
-        mPagerAdapter.notifyDataSetChanged();
+        initUI();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -111,6 +106,18 @@ public class MainActivity extends AppCompatActivity
         populateList();
     }
 
+    //Novo
+    public void initUI(){
+        mViewPager = (ViewPager) findViewById(R.id.vp);
+        mPagerAdapter = new MyPagerAdapter(supportFragmentManager,pagerItems);
+        mViewPager.setAdapter(mPagerAdapter);
+        mViewPager.setCurrentItem(0);
+        mCenterNavigationTabStrip = (NavigationTabStrip) findViewById(R.id.nts_center);
+        mCenterNavigationTabStrip.setViewPager(mViewPager);
+        mPagerAdapter.setPagerItems(pagerItems);
+        mPagerAdapter.notifyDataSetChanged();
+    }
+
     public void populateList(){
         mCourseRepo = new CourseRepo();
         cursor = mCourseRepo.getAllRows();
@@ -131,6 +138,7 @@ public class MainActivity extends AppCompatActivity
 
 
                 mPagerAdapter.setPagerItems(pagerItems);
+                mViewPager.setCurrentItem(0);
                 mPagerAdapter.notifyDataSetChanged();
 
             }
@@ -150,48 +158,93 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu,v,menuInfo);
+
+        final int DELETE_COURSE = 0;
+        final int DELETE_ALL_COURSES = 1;
+        final int UPDATE_COURSE = 2;
         if (v.getId()==R.id.course_list){
+            menuItems = new String[]{};
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
             String title = cursor.getString(cursor.getColumnIndex(Course.COLUMN_CourseName));
             menu.setHeaderTitle(title);
 
             itemId = info.id;
-
             menuItems = getResources().getStringArray(R.array.menuItems);
-            for (int i = 0;i<menuItems.length;i++){
-                menu.add(menuItems[i]);
-            }
+            menu.add(0,DELETE_COURSE,0,menuItems[0]);
+            menu.add(0,DELETE_ALL_COURSES,0,menuItems[1]);
+            menu.add(0,UPDATE_COURSE,0,menuItems[2]);
+
         }
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         courseRepo = new CourseRepo();
-        String option = item.getTitle().toString();
+
         String courseName = cursor.getString(cursor.getColumnIndex(Course.COLUMN_CourseName));
         String courseSemester = cursor.getString(cursor.getColumnIndex(Course.COLUMN_Semester));
-        Toast.makeText(getBaseContext(),courseName+"",Toast.LENGTH_SHORT).show();
 
-
-        switch(option){
-            case "Delete":
+        //Managing the initialization  of fragments when deleting or updating
+        int iid  = item.getItemId();
+        switch(iid){
+            //When delete course from db, repopulate list in navigationdrawer and fill the fragments in tab with data of
+            //fragment at position deleted-1
+            //If there is no data then set fragments to initial fragmetns
+            case 0:
                 courseRepo.deleteRow(itemId);
                 populateList();
                 Toast.makeText(getBaseContext(),courseName + " Deleted", Toast.LENGTH_SHORT).show();
-                populateList();
+                Cursor cursor;
+                courseRepo = new CourseRepo();
+                cursor = courseRepo.getAllRows();
+                if (cursor.getCount()==0){
+                    setInitialFragments();
+                }
+                else {
+                    setFragments(itemId - 1);
+                }
                 break;
-            case "Delete All":
+            //When deleted all courses from db, set fragments to initial
+            case 1:
                 courseRepo.deleteAllRows();
                 populateList();
+                setInitialFragments();
                 Toast.makeText(getBaseContext(),"All items deleted",Toast.LENGTH_SHORT).show();
                 break;
-            case "Update":
+            //When update course name or semester in db, load the changes in fragment
+            case 2:
                 UpdateCourseDialog mUpdateCourseDialog = UpdateCourseDialog.newInstance(courseName,courseSemester,itemId);
-                mUpdateCourseDialog.show(fragmentManager,"Update course");
+                mUpdateCourseDialog.show(getSupportFragmentManager(),"Update course");
                 Toast.makeText(getBaseContext(),courseName + " Updated", Toast.LENGTH_SHORT).show();
                 break;
         }
         return true;
+    }
+
+    public void setInitialFragments(){
+        pagerItems = new ArrayList<PagerItem>();
+        pagerItems.add(new PagerItem("General fragment", new InitialGeneralFragment()));
+        pagerItems.add(new PagerItem("Criteria fragment", new InitialCriteriaFragment()));
+        pagerItems.add(new PagerItem("Absence fragment", new InitialPresenceFragment()));
+
+        mPagerAdapter.setPagerItems(pagerItems);
+        mViewPager.setCurrentItem(0);
+        mPagerAdapter.notifyDataSetChanged();
+
+    }
+
+    public void setFragments(long position){
+        pagerItems = new ArrayList<PagerItem>();
+        pagerItems.add(new PagerItem("General fragment",generalFragment.newInstance(position)));
+        pagerItems.add(new PagerItem("Criteria fragment", criteriaFragment.newInstance(position)));
+        pagerItems.add(new PagerItem("Absence fragment", presenceFragment.newInstance(position)));
+
+        mPagerAdapter.setPagerItems(pagerItems);
+        mViewPager.setCurrentItem(0);
+        mPagerAdapter.notifyDataSetChanged();
+
+
     }
 
     @Override
