@@ -51,7 +51,7 @@ public class AdapterData {
     private ArrayList<Content> getData(){
         items = new ArrayList<Content>();
         contentRepo = new ContentRepo();
-        cursor = contentRepo.getRows(courseId);
+        cursor = contentRepo.getAllRows(courseId);
 
         cursor.moveToFirst();
         int n = cursor.getCount();

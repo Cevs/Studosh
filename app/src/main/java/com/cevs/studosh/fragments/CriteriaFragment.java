@@ -45,9 +45,10 @@ public class CriteriaFragment extends Fragment {
     String title;
     DialogHelper dialogHelper;
 
-    //novo
-    long itemId;
+
+    long position;
     String[] menuItems;
+    ArrayList<Long> arrayOfContentIds;
 
     public static CriteriaFragment newInstance(long rowId){
         CriteriaFragment fragment = new CriteriaFragment();
@@ -79,6 +80,9 @@ public class CriteriaFragment extends Fragment {
             Toast.makeText(getContext(),e+"",Toast.LENGTH_LONG).show();
         }
 
+        arrayOfContentIds = new ArrayList<Long>(){};
+
+
         ListView list = (ListView) view.findViewById(R.id.list_criteria);
         registerForContextMenu(list);
         list.setOnCreateContextMenuListener(this);
@@ -102,13 +106,21 @@ public class CriteriaFragment extends Fragment {
         if (v.getId() == R.id.list_criteria);{
             menuItems = new String[]{};
             contentRepo = new ContentRepo();
-            cursor = contentRepo.getRows(courseId);
+
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 
+            cursor = contentRepo.getAllRows(courseId);
+            cursor.moveToFirst();
+            position = info.id;
+            int p = 0;
+            while(p++!=position){
+                cursor.moveToNext();
+            }
             title = cursor.getString(cursor.getColumnIndex(Content.COLUMN_Criteria));
+            cursor.close();
             menu.setHeaderTitle(title);
 
-            itemId = info.id;
+
             menuItems = getResources().getStringArray(R.array.menuItems);
 
             menu.add(0,DELETE_CONTENT,0,menuItems[0]);
@@ -125,7 +137,7 @@ public class CriteriaFragment extends Fragment {
 
                         switch (iid){
                             case 3:
-                                contentRepo.deleteRow(title,courseId);
+                                contentRepo.deleteRow(getItemId(position));
                                 Toast.makeText(getView().getContext(),title+" obrisan",Toast.LENGTH_SHORT).show();
                                 adapterData.init();
 
@@ -151,6 +163,27 @@ public class CriteriaFragment extends Fragment {
             }
 
         }
+    }
+
+    public long getItemId(long position){
+        arrayOfContentIds = new ArrayList<Long>(){};
+        cursor = contentRepo.getAllRows(courseId);
+        cursor.moveToFirst();
+        //Make array list of ids that are written in database
+        do{
+            arrayOfContentIds.add(cursor.getLong(cursor.getColumnIndex(Content.COLUMN_ContentId)));
+        }while(cursor.moveToNext());
+        cursor.close();
+
+        //Get the ID of content written in array list
+        //Delete it from array
+        long itemId = arrayOfContentIds.get((int)position);
+        arrayOfContentIds.remove(position);
+
+        //return ID of item
+        return itemId;
+
+
     }
 
 }

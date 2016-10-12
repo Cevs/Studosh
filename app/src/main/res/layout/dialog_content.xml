@@ -18,20 +18,18 @@
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
         android:ems="10"
-        android:layout_below="@+id/eT_criterion"
-        android:layout_alignEnd="@+id/eT_criterion"
-        android:layout_marginTop="45dp"
-        android:id="@+id/eT_points"
-        android:hint="Ostvareni bodovi" />
+        android:id="@+id/eT_maxPoints"
+        android:hint="Moguci bodovi"
+        android:layout_below="@+id/eT_points"
+        android:layout_alignStart="@+id/eT_points" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
         android:ems="10"
-        android:layout_marginTop="64dp"
-        android:id="@+id/eT_maxPoints"
-        android:layout_below="@+id/eT_points"
-        android:layout_alignStart="@+id/eT_points"
-        android:hint="Moguci bodovi" />
+        android:id="@+id/eT_points"
+        android:hint="Ostvareni bodovi"
+        android:layout_below="@+id/eT_criterion"
+        android:layout_alignStart="@+id/eT_criterion" />
 </RelativeLayout>

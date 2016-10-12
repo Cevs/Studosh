@@ -46,27 +46,31 @@ public class ContentRepo {
     }
 
 
-    public boolean deleteRow(String criterion, long rowId){
+
+    public boolean deleteRow(long contentId){
         SQLiteDatabase db = DataBaseManager.getInstance().openDatabase();
-        String where = Content.COLUMN_Criteria + " = '" + criterion + "' AND " + Content.COLUMN_fk_CourseId
-                + " = " + rowId;
-        int b  = db.delete(Content.TABLE_Name,where,null);
+        String where = Content.COLUMN_ContentId + " = " + contentId;
+        int b = db.delete(Content.TABLE_Name,where,null);
         DataBaseManager.getInstance().closeDatabase();
         if (b!=-1)
             return true;
         return false;
     }
+    public void deleteRowWithCourseId(long courseId){
+        SQLiteDatabase db= DataBaseManager.getInstance().openDatabase();
+        String where = Content.COLUMN_fk_CourseId + " = " +courseId;
+         db.delete(Content.TABLE_Name,where,null);
+        DataBaseManager.getInstance().closeDatabase();
+    }
 
     public void deleteAllRows(long courseId){
         Cursor c = getAllRows(courseId);
-
-        if (c.moveToFirst()){
-            do{
-                String criterion  = c.getString(c.getColumnIndexOrThrow(Content.COLUMN_Criteria));
-                deleteRow(criterion,courseId);
-            }while(c.moveToNext());
-        }
+        c.moveToFirst();
+        do{
+            deleteRowWithCourseId(courseId);
+        }while(c.moveToNext());
         c.close();
+
     }
 
     public Cursor getRow(long id, String criterion){
@@ -80,16 +84,6 @@ public class ContentRepo {
 
     }
 
-    public Cursor getRows(long id){
-        SQLiteDatabase db = DataBaseManager.getInstance().openDatabase();
-        String where = Content.COLUMN_fk_CourseId + " = " + id;
-        Cursor c = db.query(true,Content.TABLE_Name,Content.ALL_ROWS,where,null,null,null,null,null);
-        if (c!=null){
-            c.moveToFirst();
-        }
-        DataBaseManager.getInstance().closeDatabase();
-        return c;
-    }
 
     public Cursor getAllRows(long courseId){
         SQLiteDatabase db = DataBaseManager.getInstance().openDatabase();

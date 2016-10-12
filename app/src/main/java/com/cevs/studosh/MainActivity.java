@@ -55,10 +55,12 @@ public class MainActivity extends AppCompatActivity
     CriteriaFragment criteriaFragment;
     PresenceFragment presenceFragment;
     ArrayList<PagerItem> pagerItems;
+    DialogHelper mDialogHelepr;
 
     private ViewPager mViewPager;
     private NavigationTabStrip mCenterNavigationTabStrip;
 
+    ArrayList<Long> arrayOfIds;
 
 
     @Override
@@ -68,19 +70,15 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //Ovo je stavljeno tu tako da se fragment manager odma prosljedi Dailogu helperu da ne bude crashova
-        DialogHelper mDialogHelepr = new DialogHelper(getBaseContext(),getFragmentManager());
+        mDialogHelepr = new DialogHelper(getBaseContext(),getFragmentManager());
 
         DBHelper dbHelper = new DBHelper(this);
         DataBaseManager.initializeInstance(dbHelper);
 
         fragmentManager = getFragmentManager();
         supportFragmentManager = getSupportFragmentManager();
-        //promjenit
+        courseRepo = new CourseRepo();
         pagerItems = new ArrayList<PagerItem>();
-        pagerItems.add(new PagerItem("General fragment", new InitialGeneralFragment()));
-        pagerItems.add(new PagerItem("Criteria fragment", new InitialCriteriaFragment()));
-        pagerItems.add(new PagerItem("Absence fragment", new InitialPresenceFragment()));
 
         initUI();
 
@@ -106,17 +104,52 @@ public class MainActivity extends AppCompatActivity
         populateList();
     }
 
-    //Novo
+
     public void initUI(){
+        cursor = courseRepo.getAllRows();
+        cursor.moveToFirst();
+
         mViewPager = (ViewPager) findViewById(R.id.vp);
         mPagerAdapter = new MyPagerAdapter(supportFragmentManager,pagerItems);
         mViewPager.setAdapter(mPagerAdapter);
-        mViewPager.setCurrentItem(0);
+        cursor = courseRepo.getAllRows();
         mCenterNavigationTabStrip = (NavigationTabStrip) findViewById(R.id.nts_center);
         mCenterNavigationTabStrip.setViewPager(mViewPager);
-        mPagerAdapter.setPagerItems(pagerItems);
-        mPagerAdapter.notifyDataSetChanged();
+
+        if(cursor.getCount()==0){
+            setInitialFragments();
+        }
+        else{
+            setFragments(cursor.getLong(cursor.getColumnIndex(Course.COLUMN_CourseId)));
+        }
+
     }
+
+    public void setInitialFragments(){
+        pagerItems = new ArrayList<PagerItem>();
+        pagerItems.add(new PagerItem("General fragment", new InitialGeneralFragment()));
+        pagerItems.add(new PagerItem("Criteria fragment", new InitialCriteriaFragment()));
+        pagerItems.add(new PagerItem("Absence fragment", new InitialPresenceFragment()));
+
+        mPagerAdapter.setPagerItems(pagerItems);
+        mViewPager.setCurrentItem(0);
+        mPagerAdapter.notifyDataSetChanged();
+
+    }
+
+    public void setFragments(long position){
+        pagerItems = new ArrayList<PagerItem>();
+        pagerItems.add(new PagerItem("General fragment",generalFragment.newInstance(position)));
+        pagerItems.add(new PagerItem("Criteria fragment", criteriaFragment.newInstance(position)));
+        pagerItems.add(new PagerItem("Absence fragment", presenceFragment.newInstance(position)));
+
+        mPagerAdapter.setPagerItems(pagerItems);
+        mViewPager.setCurrentItem(0);
+        mPagerAdapter.notifyDataSetChanged();
+
+    }
+
+
 
     public void populateList(){
         mCourseRepo = new CourseRepo();
@@ -131,19 +164,9 @@ public class MainActivity extends AppCompatActivity
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                pagerItems = new ArrayList<PagerItem>();
-                pagerItems.add(new PagerItem("General fragment",generalFragment.newInstance(l)));
-                pagerItems.add(new PagerItem("Criteria fragment", criteriaFragment.newInstance(l)));
-                pagerItems.add(new PagerItem("Absence fragment", presenceFragment.newInstance(l)));
-
-
-                mPagerAdapter.setPagerItems(pagerItems);
-                mViewPager.setCurrentItem(0);
-                mPagerAdapter.notifyDataSetChanged();
-
+                setFragments(l);
             }
         });
-
     }
 
     @Override
@@ -180,6 +203,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        long index;
         courseRepo = new CourseRepo();
 
         String courseName = cursor.getString(cursor.getColumnIndex(Course.COLUMN_CourseName));
@@ -192,17 +216,18 @@ public class MainActivity extends AppCompatActivity
             //fragment at position deleted-1
             //If there is no data then set fragments to initial fragmetns
             case 0:
+                index =returnItemId(itemId);
                 courseRepo.deleteRow(itemId);
                 populateList();
                 Toast.makeText(getBaseContext(),courseName + " Deleted", Toast.LENGTH_SHORT).show();
                 Cursor cursor;
                 courseRepo = new CourseRepo();
                 cursor = courseRepo.getAllRows();
-                if (cursor.getCount()==0){
+                if (index == -1){
                     setInitialFragments();
                 }
                 else {
-                    setFragments(itemId - 1);
+                    setFragments(index);
                 }
                 break;
             //When deleted all courses from db, set fragments to initial
@@ -222,30 +247,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void setInitialFragments(){
-        pagerItems = new ArrayList<PagerItem>();
-        pagerItems.add(new PagerItem("General fragment", new InitialGeneralFragment()));
-        pagerItems.add(new PagerItem("Criteria fragment", new InitialCriteriaFragment()));
-        pagerItems.add(new PagerItem("Absence fragment", new InitialPresenceFragment()));
 
-        mPagerAdapter.setPagerItems(pagerItems);
-        mViewPager.setCurrentItem(0);
-        mPagerAdapter.notifyDataSetChanged();
-
-    }
-
-    public void setFragments(long position){
-        pagerItems = new ArrayList<PagerItem>();
-        pagerItems.add(new PagerItem("General fragment",generalFragment.newInstance(position)));
-        pagerItems.add(new PagerItem("Criteria fragment", criteriaFragment.newInstance(position)));
-        pagerItems.add(new PagerItem("Absence fragment", presenceFragment.newInstance(position)));
-
-        mPagerAdapter.setPagerItems(pagerItems);
-        mViewPager.setCurrentItem(0);
-        mPagerAdapter.notifyDataSetChanged();
-
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -292,5 +294,34 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    //Function returnItemId takes care of proper indexing course entries
+    //When deleting courses from database this function returns id of  previously inserted entry
+    public long returnItemId(long id){
+        arrayOfIds = new ArrayList<Long>(){};
+        cursor = courseRepo.getAllRows();
+        cursor.moveToFirst();
+        //Make array list of ids that are written in database
+        do{
+            arrayOfIds.add(cursor.getLong(cursor.getColumnIndex(Course.COLUMN_CourseId)));
+        }while(cursor.moveToNext());
+        cursor.close();
+
+        //Get the index of specific id in array list
+        //And delete it from array
+        long index = arrayOfIds.indexOf(id);
+        arrayOfIds.remove(id);
+
+        if(cursor.getCount() > 1 && index != 0){
+            return  arrayOfIds.get((int)index-1);
+        }
+        else if(cursor.getCount()> 1 && index == 0){
+            return  arrayOfIds.get((int)index);
+        }
+        else
+            return -1;
+
+
     }
 }
