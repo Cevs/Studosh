@@ -91,6 +91,7 @@ public class ContentDialog extends DialogFragment {
                     content.setPoints(doublePoints);
                     content.setMaxPoints(doubleMaxPoints);
                     content.setCriteria(stringCriterion);
+                    long m = courseId;
                     content.setCourseId(courseId);
                     if (contentRepo.insertRow(content)!=-1){
                         Toast.makeText(getActivity(),"Kriterij dodan",Toast.LENGTH_SHORT).show();
@@ -114,7 +115,7 @@ public class ContentDialog extends DialogFragment {
         builder.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Toast.makeText(getActivity(),"Odustani",Toast.LENGTH_SHORT).show();
+
             }
         });
 

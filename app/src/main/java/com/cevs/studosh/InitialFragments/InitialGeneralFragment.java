@@ -19,7 +19,10 @@ public class InitialGeneralFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+
         view = inflater.inflate(R.layout.initial_fragment_general,container,false);
+
         return view;
     }
 }

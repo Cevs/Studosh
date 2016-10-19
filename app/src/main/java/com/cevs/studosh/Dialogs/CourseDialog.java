@@ -42,9 +42,9 @@ public class CourseDialog extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view);
-        builder.setTitle("Add course in list of courses");
+        builder.setTitle("Dodavanje kolegija");
 
-        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("Dodaj", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -68,15 +68,15 @@ public class CourseDialog extends DialogFragment {
                     course.setCourseName(name);
                     long courseId = courseRepo.insertRow(course);
                     if (courseId!=-1){
-                        Toast.makeText(getActivity(),"Course was added", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),"Kolegij dodan", Toast.LENGTH_SHORT).show();
                         ((MainActivity)getActivity()).populateList();
                         ((MainActivity)getActivity()).setFragments(courseId);
                     }
                     else
-                        Toast.makeText(getActivity(),"Failed to add Course", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),"Neuspjelo", Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    Toast toast = Toast.makeText(getActivity(), "Enter both data", Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(getActivity(), "Unesite sve podatke!", Toast.LENGTH_SHORT);
                     TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
                     if (v!= null) v.setGravity(Gravity.CENTER);
                     toast.show();
@@ -86,11 +86,9 @@ public class CourseDialog extends DialogFragment {
         });
 
 
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Prekini", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Toast.makeText(getActivity(),"Cancel was clicked", Toast.LENGTH_SHORT).show();
-            }
+            public void onClick(DialogInterface dialogInterface, int i){}
         });
 
         Dialog dialog = builder.create();

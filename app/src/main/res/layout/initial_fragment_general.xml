@@ -4,21 +4,23 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/courses"
-        android:id="@+id/imageView3"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
-
     <TextView
         android:text="Nema podataka"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="71dp"
         android:id="@+id/textView2"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:layout_below="@+id/imageView3"
+        android:layout_marginBottom="90dp"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        app:srcCompat="@drawable/book_2"
+        android:id="@+id/imageView3"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+
 </RelativeLayout>

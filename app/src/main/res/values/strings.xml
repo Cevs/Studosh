@@ -20,8 +20,8 @@
 
 
     <string-array name="tabs">
-        <item>General</item>
-        <item>Criteria</item>
-        <item>Presence</item>
+        <item>Općenito</item>
+        <item>Kriteriji</item>
+        <item>Prisutnost</item>
     </string-array>
 </resources>

@@ -8,8 +8,10 @@ import android.widget.Toast;
 
 import com.cevs.studosh.data.model.Content;
 import com.cevs.studosh.data.model.Course;
+import com.cevs.studosh.data.model.Presence;
 import com.cevs.studosh.data.repo.ContentRepo;
 import com.cevs.studosh.data.repo.CourseRepo;
+import com.cevs.studosh.data.repo.PresenceRepo;
 
 /**
  * Created by TOSHIBA on 28.09.2016..
@@ -17,7 +19,7 @@ import com.cevs.studosh.data.repo.CourseRepo;
 
 public class DBHelper  extends SQLiteOpenHelper{
 
-    private static final int DATABASE_VERSION =6 ;
+    private static final int DATABASE_VERSION =8 ;
     private static final String DATABASE_NAME= "studoshDB.db";
     private Context context;
 
@@ -25,7 +27,7 @@ public class DBHelper  extends SQLiteOpenHelper{
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
-        SQLiteDatabase db = getWritableDatabase();
+        //SQLiteDatabase db = getWritableDatabase();
     }
 
     @Override
@@ -33,6 +35,7 @@ public class DBHelper  extends SQLiteOpenHelper{
         try{
             db.execSQL(CourseRepo.createTable());
             db.execSQL(ContentRepo.createTable());
+            db.execSQL(PresenceRepo.createTable());
             db.execSQL("PRAGMA foreign_keys=ON");
 
         }catch(SQLException e){
@@ -45,6 +48,7 @@ public class DBHelper  extends SQLiteOpenHelper{
         try{
             db.execSQL("DROP TABLE IF EXISTS "+ Course.TABLE_Name);
             db.execSQL("DROP TABLE IF EXISTS " + Content.TABLE_Name);
+            db.execSQL("DROP TABLE IF EXISTS " + Presence.TABLE_Name);
             onCreate(db);
         }catch (SQLException e){
             Toast.makeText(context, e+"", Toast.LENGTH_LONG).show();

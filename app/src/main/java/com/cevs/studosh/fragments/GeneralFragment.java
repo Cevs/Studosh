@@ -4,12 +4,10 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cevs.studosh.R;
 import com.cevs.studosh.data.model.Course;
@@ -48,13 +46,11 @@ public class GeneralFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.fragment_general,container,false);
-
         name = (TextView) view.findViewById(R.id.tvFragment_courseName);
         semester = (TextView) view.findViewById(R.id.tvFragment_semester);
 
         courseRepo = new CourseRepo();
         cursor = courseRepo.getRow(courseId);
-
 
         String courseName = cursor.getString(cursor.getColumnIndex(Course.COLUMN_CourseName));
         String courseSemester = cursor.getString(cursor.getColumnIndex(Course.COLUMN_Semester));
@@ -62,6 +58,7 @@ public class GeneralFragment extends Fragment {
 
         name.setText(courseName);
         semester.setText(courseSemester);
+
 
         cursor.close();
         return view;

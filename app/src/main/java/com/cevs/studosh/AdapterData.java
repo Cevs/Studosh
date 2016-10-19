@@ -69,14 +69,8 @@ public class AdapterData {
 
             }
         }
-        int m = items.size();
         cursor.close();
-        content = new Content();
-        content.setContentId(-1);
-        content.setPoints(-1);
-        content.setMaxPoints(-1);
-        content.setCourseId(courseId);
-        items.add(content);
+
 
         return items;
     }

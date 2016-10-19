@@ -3,7 +3,7 @@ package com.cevs.studosh;
 import android.app.FragmentManager;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.ContextMenu;
@@ -17,9 +17,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import com.cevs.studosh.Dialogs.DialogHelper;
 import com.cevs.studosh.Dialogs.UpdateCourseDialog;
 import com.cevs.studosh.InitialFragments.InitialCriteriaFragment;
@@ -34,7 +34,9 @@ import com.cevs.studosh.fragments.GeneralFragment;
 import com.cevs.studosh.fragments.PagerItem;
 import com.cevs.studosh.fragments.PresenceFragment;
 import com.gigamole.navigationtabstrip.NavigationTabStrip;
-
+import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
+import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
+import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
@@ -55,12 +57,18 @@ public class MainActivity extends AppCompatActivity
     CriteriaFragment criteriaFragment;
     PresenceFragment presenceFragment;
     ArrayList<PagerItem> pagerItems;
-    DialogHelper mDialogHelepr;
+    DialogHelper mDialogHelper;
 
     private ViewPager mViewPager;
     private NavigationTabStrip mCenterNavigationTabStrip;
 
     ArrayList<Long> arrayOfIds;
+
+    ImageView mainItemIcon, subItemIcon1, subItemIcon2, subItemIcon3, subItemIcon4, subItemIcon5;
+    SubActionButton  subButton1, subButton2, subButton3, subButton4, subButton5;
+    FloatingActionMenu actionMenu;
+
+    long courseId;
 
 
     @Override
@@ -70,7 +78,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mDialogHelepr = new DialogHelper(getBaseContext(),getFragmentManager());
+        mDialogHelper = new DialogHelper(getBaseContext(),getFragmentManager());
 
         DBHelper dbHelper = new DBHelper(this);
         DataBaseManager.initializeInstance(dbHelper);
@@ -82,14 +90,92 @@ public class MainActivity extends AppCompatActivity
 
         initUI();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+
+        mainItemIcon = new ImageView(this);
+        subItemIcon1 = new ImageView(this);
+        subItemIcon2 = new ImageView(this);
+        subItemIcon3 = new ImageView(this);
+        subItemIcon4 = new ImageView(this);
+        subItemIcon5 = new ImageView(this);
+
+
+        FloatingActionButton fab = new FloatingActionButton.Builder(this).setContentView(mainItemIcon)
+                .setLayoutParams(new FloatingActionButton.LayoutParams(250,250))
+                .setPosition(5).build();
+
+        SubActionButton.Builder itemBuilder = new SubActionButton.Builder(this)
+                .setLayoutParams(new FloatingActionButton.LayoutParams(160,160));
+
+
+        //subItemIcon4.setColorFilter(R.color.mainColor);
+        //subItemIcon5.setColorFilter(R.color.mainColor);
+
+
+        mainItemIcon.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.menu_button));
+        subItemIcon1.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.add_course));
+        subItemIcon2.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.add_criteria));
+        subItemIcon3.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.add_presence));
+        subItemIcon4.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.mark));
+        subItemIcon5.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.cross));
+
+        subButton1 = itemBuilder.setContentView(subItemIcon1).build();
+        subButton2 = itemBuilder.setContentView(subItemIcon2).build();
+        subButton3 = itemBuilder.setContentView(subItemIcon3).build();
+        subButton4 = itemBuilder.setContentView(subItemIcon4).build();
+        subButton5 = itemBuilder.setContentView(subItemIcon5).build();
+
+
+        actionMenu = new FloatingActionMenu.Builder(this).addSubActionView(subButton1)
+                .addSubActionView(subButton2).addSubActionView(subButton3).addSubActionView(subButton4)
+                .addSubActionView(subButton5).attachTo(fab).setRadius(300).setStartAngle(200).setEndAngle(340).build();
+
+        //Sadly, this must be implemented this way because the developers of this library
+        //didn't create a way to find out or to set id to a buttons
+        subButton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogHelper mDialogHelper = new DialogHelper(getBaseContext(), fragmentManager);
+                mViewPager.setCurrentItem(0);
                 mDialogHelper.setCourseDialog();
+                actionMenu.close(true);
+
             }
         });
+        subButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDialogHelper = new DialogHelper(getBaseContext(),courseId);
+                mDialogHelper.setContentDialog();
+                mViewPager.setCurrentItem(1);
+                actionMenu.close(true);
+
+
+            }
+        });
+        subButton3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mViewPager.setCurrentItem(2);
+                actionMenu.close(true);
+            }
+        });
+
+        subButton4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mViewPager.setCurrentItem(2);
+                actionMenu.close(true);
+            }
+        });
+
+        subButton5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mViewPager.setCurrentItem(2);
+                actionMenu.close(true);
+            }
+        });
+
+
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -121,6 +207,7 @@ public class MainActivity extends AppCompatActivity
         }
         else{
             setFragments(cursor.getLong(cursor.getColumnIndex(Course.COLUMN_CourseId)));
+            courseId = cursor.getLong(cursor.getColumnIndex(Course.COLUMN_CourseId));
         }
 
     }
@@ -138,6 +225,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void setFragments(long position){
+        courseId = position;
         pagerItems = new ArrayList<PagerItem>();
         pagerItems.add(new PagerItem("General fragment",generalFragment.newInstance(position)));
         pagerItems.add(new PagerItem("Criteria fragment", criteriaFragment.newInstance(position)));
@@ -164,7 +252,10 @@ public class MainActivity extends AppCompatActivity
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                courseId = l;
                 setFragments(l);
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
             }
         });
     }
@@ -324,4 +415,5 @@ public class MainActivity extends AppCompatActivity
 
 
     }
+
 }

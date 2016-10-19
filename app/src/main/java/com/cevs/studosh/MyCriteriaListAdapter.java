@@ -48,42 +48,28 @@ public class MyCriteriaListAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        return 2;
+        return 1;
     }
 
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         LayoutInflater inflater = (LayoutInflater) adapterContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if (array.get(i).getContentId()==-1){
-            rowView = inflater.inflate(R.layout.listview_row_criterria_button,viewGroup,false);
-            Button button = (Button) rowView.findViewById(R.id.button_listView_criteriaAdd);
 
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+        rowView = inflater.inflate(R.layout.listview_row_criteria,viewGroup,false);
 
-                    DialogHelper mDialogHelper = new DialogHelper(adapterContext, array.get(0).getCourseId());
-                    mDialogHelper.setContentDialog();
-                }
-            });
-        }
+        TextView numberTv = (TextView) rowView.findViewById(R.id.tV_cNo);
+        TextView criteriaTv = (TextView) rowView.findViewById(R.id.tV_listView_criteria);
+        TextView pointsTv = (TextView) rowView.findViewById(R.id.tV_listView_points);
+        TextView maxPointsTv = (TextView) rowView.findViewById(R.id.tV_listView_maxPoints);
 
-        else{
-            rowView = inflater.inflate(R.layout.listview_row_criteria,viewGroup,false);
+        //i-position (starts with 0)
+        numberTv.setText(i+1+"");
+        criteriaTv.setText(array.get(i).getCriteria());
+        pointsTv.setText(array.get(i).getPoints()+"");
+        maxPointsTv.setText(array.get(i).getMaxPoints()+"");
 
-            TextView numberTv = (TextView) rowView.findViewById(R.id.tV_cNo);
-            TextView criteriaTv = (TextView) rowView.findViewById(R.id.tV_listView_criteria);
-            TextView pointsTv = (TextView) rowView.findViewById(R.id.tV_listView_points);
-            TextView maxPointsTv = (TextView) rowView.findViewById(R.id.tV_listView_maxPoints);
 
-            //i-position (starts with 0)
-            numberTv.setText(i+1+"");
-            criteriaTv.setText(array.get(i).getCriteria());
-            pointsTv.setText(array.get(i).getPoints()+"");
-            maxPointsTv.setText(array.get(i).getMaxPoints()+"");
-
-        }
 
         return  rowView;
     }

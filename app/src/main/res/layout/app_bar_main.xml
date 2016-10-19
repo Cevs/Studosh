@@ -21,6 +21,7 @@
         <android.support.design.widget.AppBarLayout
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
+            android:background="@color/mainColor"
             android:theme="@style/AppTheme.AppBarOverlay">
 
 
@@ -28,14 +29,14 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="#ff252e39"
+                android:background="#2C4254"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:background="#ff252e39">
+                android:background="@color/mainColor">
 
                 <com.gigamole.navigationtabstrip.NavigationTabStrip
                     android:id="@+id/nts_center"
@@ -54,8 +55,8 @@
                     app:nts_inactive_color="#81ffffff"
                     app:nts_titles="@array/tabs"
                     app:nts_type="point"
-                    app:nts_typeface="fonts/moon.otf"
-                    app:nts_weight="7dp" />
+                    app:nts_weight="7dp"
+                    android:background="@color/mainColor"/>
             </FrameLayout>
 
 
@@ -69,13 +70,6 @@
     </LinearLayout>
 
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_dialog_email" />
 
 
 
