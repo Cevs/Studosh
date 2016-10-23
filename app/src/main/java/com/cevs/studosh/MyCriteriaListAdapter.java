@@ -1,6 +1,7 @@
 package com.cevs.studosh;
 
 import android.content.Context;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,16 +21,23 @@ import java.util.ArrayList;
 public class MyCriteriaListAdapter extends BaseAdapter {
 
     ArrayList<Content> array;
+    ViewHolder holder;
 
-    Context adapterContext;
     View rowView;
+    LayoutInflater inflater;
+
+    private static class ViewHolder
+    {
+        TextView textViewNumber;
+        TextView textViewCriteria;
+        TextView textViewPoints;
+        TextView textViewMaxPoints;
+    }
 
     public MyCriteriaListAdapter(ArrayList<Content> array, Context context) {
         this.array = array;
-        adapterContext = context;
-
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
-
 
     @Override
     public int getCount() {
@@ -51,25 +59,29 @@ public class MyCriteriaListAdapter extends BaseAdapter {
         return 1;
     }
 
-
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
-        LayoutInflater inflater = (LayoutInflater) adapterContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    public View getView(int i, View rowView, ViewGroup viewGroup) {
 
-        rowView = inflater.inflate(R.layout.listview_row_criteria,viewGroup,false);
+        if (rowView == null) {
+            rowView = inflater.inflate(R.layout.listview_row_criteria, viewGroup, false);
 
-        TextView numberTv = (TextView) rowView.findViewById(R.id.tV_cNo);
-        TextView criteriaTv = (TextView) rowView.findViewById(R.id.tV_listView_criteria);
-        TextView pointsTv = (TextView) rowView.findViewById(R.id.tV_listView_points);
-        TextView maxPointsTv = (TextView) rowView.findViewById(R.id.tV_listView_maxPoints);
+            holder = new ViewHolder();
+            holder.textViewNumber = (TextView) rowView.findViewById(R.id.tV_cNo);
+            holder.textViewCriteria = (TextView) rowView.findViewById(R.id.tV_listView_criteria);
+            holder.textViewPoints = (TextView) rowView.findViewById(R.id.tV_listView_points);
+            holder.textViewMaxPoints = (TextView) rowView.findViewById(R.id.tV_listView_maxPoints);
+
+            rowView.setTag(holder);
+        }
+        else{
+            holder = (ViewHolder)rowView.getTag();
+        }
 
         //i-position (starts with 0)
-        numberTv.setText(i+1+"");
-        criteriaTv.setText(array.get(i).getCriteria());
-        pointsTv.setText(array.get(i).getPoints()+"");
-        maxPointsTv.setText(array.get(i).getMaxPoints()+"");
-
-
+        holder.textViewNumber.setText(i+1+"");
+        holder.textViewCriteria.setText(array.get(i).getCriteria());
+        holder.textViewPoints.setText(array.get(i).getPoints()+"");
+        holder.textViewMaxPoints.setText(array.get(i).getMaxPoints()+"");
 
         return  rowView;
     }

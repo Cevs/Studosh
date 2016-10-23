@@ -20,7 +20,9 @@ import android.widget.Toast;
 import com.cevs.studosh.AdapterData;
 import com.cevs.studosh.Dialogs.DialogHelper;
 import com.cevs.studosh.Dialogs.UpdateContentDialog;
+import com.cevs.studosh.MainActivity;
 import com.cevs.studosh.MyCriteriaListAdapter;
+import com.cevs.studosh.MyPagerAdapter;
 import com.cevs.studosh.R;
 import com.cevs.studosh.data.model.Content;
 import com.cevs.studosh.data.repo.ContentRepo;
@@ -103,6 +105,8 @@ public class CriteriaFragment extends Fragment {
         final int DELETE_ALL_CONTENT = 4;
         final int UPDATE_CONTENT = 5;
 
+        v.setSelected(true);
+
         if (v.getId() == R.id.list_criteria);{
             menuItems = new String[]{};
             contentRepo = new ContentRepo();
@@ -140,12 +144,14 @@ public class CriteriaFragment extends Fragment {
                                 contentRepo.deleteRow(getItemId(position));
                                 Toast.makeText(getView().getContext(),title+" obrisan",Toast.LENGTH_SHORT).show();
                                 adapterData.init();
+                                ((MainActivity)getActivity()).setFragments(courseId);
 
                                 break;
                             case 4:
                                 contentRepo.deleteAllRows(courseId);
                                 Toast.makeText(getView().getContext(),"Kriteriji obrisani",Toast.LENGTH_SHORT).show();
                                 adapterData.init();
+                                ((MainActivity)getActivity()).setFragments(courseId);
 
                                 break;
                             case 5:

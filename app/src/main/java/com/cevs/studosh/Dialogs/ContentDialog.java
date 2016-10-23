@@ -1,8 +1,10 @@
 package com.cevs.studosh.Dialogs;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -12,9 +14,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.cevs.studosh.AdapterData;
+import com.cevs.studosh.MainActivity;
+import com.cevs.studosh.MyPagerAdapter;
 import com.cevs.studosh.R;
 import com.cevs.studosh.data.model.Content;
 import com.cevs.studosh.data.repo.ContentRepo;
+import com.cevs.studosh.fragments.GeneralFragment;
 
 /**
  * Created by TOSHIBA on 06.10.2016..
@@ -51,8 +56,6 @@ public class ContentDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
-
 
         inflater = getActivity().getLayoutInflater();
         view = inflater.inflate(R.layout.dialog_content,null);
@@ -97,6 +100,7 @@ public class ContentDialog extends DialogFragment {
                         Toast.makeText(getActivity(),"Kriterij dodan",Toast.LENGTH_SHORT).show();
                         AdapterData adapterData = new AdapterData(getActivity(), courseId);
                         adapterData.init();
+                        ((MainActivity)getActivity()).setFragments(courseId);
                     }
                     else{
                         Toast.makeText(getActivity(),"Neuspjelo dodavanje kriterija",Toast.LENGTH_SHORT).show();
@@ -123,6 +127,5 @@ public class ContentDialog extends DialogFragment {
 
         return dialog;
     }
-
 
 }

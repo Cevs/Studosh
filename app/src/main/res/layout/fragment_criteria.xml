@@ -11,72 +11,109 @@
         android:id="@+id/imageView5"
         android:layout_centerInParent="true" />
 
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/transparentColor">
+        android:background="@color/frameColor"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
 
-            <TextView
-                android:text="Kriterij"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/textView4"
-                android:layout_toEndOf="@+id/textView4"
-                android:layout_marginStart="51dp"
-                android:id="@+id/textView5"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-            <TextView
-                android:text="bodovi"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/textView5"
-                android:layout_centerHorizontal="true"
-                android:id="@+id/textView6"
-                android:layout_alignTop="@+id/textView5"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-            <TextView
-                android:text="Maksimalno"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/textView6"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="11dp"
-                android:id="@+id/textView7"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-            <TextView
-                android:text="#"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="95dp"
-                android:id="@+id/textView4"
+                android:orientation="horizontal"
+                android:id="@+id/header"
+                android:layout_marginTop="97dp"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentStart="true"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+                android:dividerHeight="2dp"
+                android:background="@color/transparentColor">
 
-            <ListView
-                android:id="@+id/list_criteria"
+                <TextView
+                    android:id="@+id/tv1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:textSize="28dp"
+                    android:maxLines="1"
+                    android:gravity="left"
+                    android:text="#"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/black"
+                    android:layout_marginLeft="5dp"/>
+                <TextView
+                    android:id="@+id/tv2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:textSize="28dp"
+                    android:maxLines="1"
+                    android:gravity="left"
+                    android:text="Kriterij"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/black" />
+                <TextView
+                    android:id="@+id/tv3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="28dp"
+                    android:maxLines="1"
+                    android:gravity="right"
+                    android:text="Bodovi"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/black" />
+                <TextView
+                    android:id="@+id/tv4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="28dp"
+                    android:maxLines="1"
+                    android:gravity="right"
+                    android:text="Max"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/black"
+                    android:layout_marginRight="5dp"/>
+
+            </LinearLayout>
+
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@+id/textView5"
-                android:layout_alignParentStart="true" />
+                android:layout_height="4dp"
+                android:layout_below="@+id/header"
+                android:background="@color/generalFragment"
+                android:id="@+id/view" />
 
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="395dp"
+                android:id="@+id/listFrame"
+                android:layout_below="@+id/header"
+                android:layout_marginTop="3dp"
+                android:layout_alignParentStart="true">
 
+                <ListView
+                    android:id="@+id/list_criteria"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/header"
+                    android:layout_alignParentStart="true"
+                    android:divider="@color/mainColor"
+                    android:dividerHeight="1dp"
+                    />
 
+            </FrameLayout>
 
         </RelativeLayout>
-
-
-
+        
     </FrameLayout>
-
 
 
 </RelativeLayout>

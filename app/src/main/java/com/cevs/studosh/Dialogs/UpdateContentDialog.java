@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.cevs.studosh.AdapterData;
+import com.cevs.studosh.MainActivity;
 import com.cevs.studosh.R;
 import com.cevs.studosh.data.DataBaseManager;
 import com.cevs.studosh.data.model.Content;
@@ -96,6 +97,7 @@ public class UpdateContentDialog extends DialogFragment {
                     Toast.makeText(getActivity(),"Ažurirano",Toast.LENGTH_LONG).show();
                     AdapterData adapterData = new AdapterData(getActivity(),courseId);
                     adapterData.init();
+                    ((MainActivity)getActivity()).setFragments(courseId);
                 }catch (Exception e ){
                     Toast.makeText(getActivity(),e+"",Toast.LENGTH_LONG).show();
                 }

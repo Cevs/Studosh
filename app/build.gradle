@@ -3,6 +3,10 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.1"
+
+    dexOptions{
+        javaMaxHeapSize "3g"
+    }
     defaultConfig {
         applicationId "com.cevs.studosh"
         minSdkVersion 19

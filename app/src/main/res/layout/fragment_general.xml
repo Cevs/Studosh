@@ -15,64 +15,249 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/frameLayout1"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:layout_centerInParent="true"
-        android:background="@color/transparentColor">
+        android:background="@color/frameColor"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
 
-        <RelativeLayout
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="125dp"
+           android:layout_marginLeft="7dp"
+           android:layout_marginRight="7dp"
+           android:background="@drawable/my_border">
+           <TextView
+               android:layout_width="0dp"
+               android:layout_height="wrap_content"
+               android:layout_weight="1.1"
+               android:text="Kolegij:"
+               android:textSize="25sp"
+               android:fontFamily="sans-serif-medium"
+               android:textColor="@color/black"
+               android:layout_marginLeft="5dp"/>
+
+           <TextView
+               android:layout_width="0dp"
+               android:layout_height="wrap_content"
+               android:layout_weight="0.9"
+               android:id="@+id/tvFragment_courseName"
+               android:text="Kolegij"
+               android:textSize="21sp"
+               android:fontFamily="sans-serif-medium"
+               android:textColor="@color/generalFragment"
+               android:maxLines="1"
+               android:maxLength="15"
+               android:gravity="center"
+               android:ellipsize="end"/>
+       </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="165dp"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp"
+            android:background="@drawable/my_border">
 
             <TextView
-                android:text="Kolegij:"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/tvFragment_courseName"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:layout_above="@+id/textView16"
-                android:layout_alignStart="@+id/tvFragment_semester" />
-
-            <TextView
+                android:layout_weight="1.1"
                 android:text="Semestar:"
-                android:layout_width="wrap_content"
+                android:textSize="25sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/black"
+                android:layout_marginLeft="5dp"/>
+
+            <TextView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="0.9"
                 android:id="@+id/tvFragment_semester"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:layout_marginStart="25dp"
-                android:layout_below="@+id/tvFragment_courseName"
-                android:layout_toEndOf="@+id/textView16" />
+                android:text="Semestar"
+                android:textSize="21sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/generalFragment"
+                android:maxLines="1"
+                android:maxLength="13"
+                android:gravity="center"
+                android:ellipsize="end"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="205dp"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp"
+            android:background="@drawable/my_border">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.1"
+                android:text="Prisustvo:"
+                android:textSize="25sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/black"
+                android:layout_marginLeft="5dp"/>
 
             <TextView
-                android:text="Kolegij:"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/textView14"
-                android:layout_marginStart="59dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:layout_alignBaseline="@+id/tvFragment_courseName"
-                android:layout_alignBottom="@+id/tvFragment_courseName"
-                android:layout_alignParentStart="true" />
+                android:layout_weight="0.9"
+                android:text="Broj"
+                android:textSize="21sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/black"
+                android:maxLines="1"
+                android:maxLength="13"
+                android:gravity="center"
+                android:ellipsize="end"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="245dp"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp"
+            android:background="@drawable/my_border">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Dolasci:"
+                android:layout_weight="1.1"
+                android:textSize="25sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/black"
+                android:layout_marginLeft="5dp"/>
 
             <TextView
-                android:text="Semestar:"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/textView16"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:layout_centerVertical="true"
-                android:layout_alignEnd="@+id/textView14" />
+                android:layout_weight="0.9"
+                android:text="Broj"
+                android:textSize="21sp"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:maxLength="13"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:textColor="@color/black"/>
+        </LinearLayout>
 
-        </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="285dp"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp"
+            android:background="@drawable/my_border">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.1"
+                android:text="Bodovi:"
+                android:textSize="25sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/black"
+                android:layout_marginLeft="5dp"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.45"
+                android:id="@+id/generalFragmentPoints"
+                android:text="Ostvareno/"
+                android:textSize="21sp"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:maxLength="6"
+                android:ellipsize="end"
+                android:gravity="right"
+                android:textColor="@color/generalFragment"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.45"
+                android:id="@+id/generalFragmentMaxPoints"
+                android:text="/Bodovi"
+                android:textSize="21sp"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:maxLength="6"
+                android:gravity="left"
+                android:textColor="@color/generalFragment"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="325dp"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp"
+            android:background="@drawable/my_border">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.1"
+                android:text="Ocjena:"
+                android:textSize="25sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/black"
+                android:layout_marginLeft="5dp"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.9"
+                android:id="@+id/generalFragmentMark"
+                android:text="Ocjena"
+                android:textSize="21sp"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:maxLength="13"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:textColor="@color/generalFragment"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="365dp"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp"
+            android:background="@drawable/my_border">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.1"
+                android:text="Pravo na potpis:"
+                android:textSize="25sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/black"
+                android:layout_marginLeft="5dp"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.9"
+                android:text="True/False"
+                android:textSize="21sp"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:maxLength="13"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:textColor="@color/black"/>
+        </LinearLayout>
+
 
 
     </FrameLayout>
-
-
-
-
-
-
 
 
 </RelativeLayout>

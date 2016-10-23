@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
+
 import com.cevs.studosh.Dialogs.DialogHelper;
 import com.cevs.studosh.Dialogs.UpdateCourseDialog;
 import com.cevs.studosh.InitialFragments.InitialCriteriaFragment;
@@ -40,7 +41,7 @@ import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener{
 
     CourseRepo mCourseRepo;
     android.support.v4.app.FragmentManager supportFragmentManager;
@@ -107,10 +108,6 @@ public class MainActivity extends AppCompatActivity
                 .setLayoutParams(new FloatingActionButton.LayoutParams(160,160));
 
 
-        //subItemIcon4.setColorFilter(R.color.mainColor);
-        //subItemIcon5.setColorFilter(R.color.mainColor);
-
-
         mainItemIcon.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.menu_button));
         subItemIcon1.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.add_course));
         subItemIcon2.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.add_criteria));
@@ -134,7 +131,6 @@ public class MainActivity extends AppCompatActivity
         subButton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mViewPager.setCurrentItem(0);
                 mDialogHelper.setCourseDialog();
                 actionMenu.close(true);
 
@@ -201,6 +197,7 @@ public class MainActivity extends AppCompatActivity
         cursor = courseRepo.getAllRows();
         mCenterNavigationTabStrip = (NavigationTabStrip) findViewById(R.id.nts_center);
         mCenterNavigationTabStrip.setViewPager(mViewPager);
+        mCenterNavigationTabStrip.setStripColor(ContextCompat.getColor(getBaseContext(),R.color.navigationTabStrip));
 
         if(cursor.getCount()==0){
             setInitialFragments();
@@ -224,37 +221,48 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+
+    //Method for refreshing fragments when old data set changed or for creating new fragments wih new data set
     public void setFragments(long position){
-        courseId = position;
+        Boolean same = false;
+        if (courseId != position)
+            courseId = position;
+        else
+            same = true;
+
         pagerItems = new ArrayList<PagerItem>();
         pagerItems.add(new PagerItem("General fragment",generalFragment.newInstance(position)));
         pagerItems.add(new PagerItem("Criteria fragment", criteriaFragment.newInstance(position)));
         pagerItems.add(new PagerItem("Absence fragment", presenceFragment.newInstance(position)));
 
+        if(!same) {
+            mViewPager.setCurrentItem(0);
+        }
         mPagerAdapter.setPagerItems(pagerItems);
-        mViewPager.setCurrentItem(0);
         mPagerAdapter.notifyDataSetChanged();
-
     }
+
+
 
 
 
     public void populateList(){
         mCourseRepo = new CourseRepo();
         cursor = mCourseRepo.getAllRows();
-        fromFieldNames = new String[]{Course.COLUMN_CourseName};
-        int[] toViewIds= new int[]{R.id.textView_course_name};
-        simpleCursorAdapter = new SimpleCursorAdapter(getBaseContext(),R.layout.course_item, cursor,fromFieldNames,toViewIds,0);
-        ListView list = (ListView)findViewById(R.id.course_list);
-        list.setAdapter(simpleCursorAdapter);
-        registerForContextMenu(list);
 
+
+        MyNavigationDrawerAdapter cursorAdapter = new MyNavigationDrawerAdapter(this,cursor,false);
+        ListView list = (ListView)findViewById(R.id.course_list);
+        list.setAdapter(cursorAdapter);
+
+        registerForContextMenu(list);
+        list.setItemChecked(2,true);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                courseId = l;
                 setFragments(l);
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                view.setSelected(true);
                 drawer.closeDrawer(GravityCompat.START);
             }
         });
@@ -366,22 +374,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
+        item.setChecked(true);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
