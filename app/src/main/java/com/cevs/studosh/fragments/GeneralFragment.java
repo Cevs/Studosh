@@ -67,7 +67,8 @@ public class GeneralFragment extends Fragment {
         cursor = courseRepo.getRow(courseId);
 
         String courseName = cursor.getString(cursor.getColumnIndex(Course.COLUMN_CourseName));
-        String courseSemester = cursor.getString(cursor.getColumnIndex(Course.COLUMN_Semester));
+        //TREBA PROJEMNIT ODAKLE SE VUCE SEMESTAR
+        //String courseSemester = cursor.getString(cursor.getColumnIndex(Course.COLUMN_Semester));
 
         sumOfPoints = 0.0;
         sumOfMaxPoints = 0.0;
@@ -91,7 +92,7 @@ public class GeneralFragment extends Fragment {
         maxPoints.setText(sumOfMaxPoints+"");
         mark.setText(grade);
         name.setText(courseName);
-        semester.setText(courseSemester);
+        //semester.setText(courseSemester);
 
 
 

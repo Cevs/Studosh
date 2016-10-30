@@ -35,11 +35,10 @@ public class UpdateCourseDialog extends android.support.v4.app.DialogFragment {
 
     public UpdateCourseDialog(){}
 
-    public static UpdateCourseDialog newInstance(String course, String semester, long courseId){
+    public static UpdateCourseDialog newInstance(String course, long courseId){
         UpdateCourseDialog mDialog = new UpdateCourseDialog();
         Bundle args = new Bundle();
         args.putString("Name",course);
-        args.putString("Semester", semester);
         args.putLong("Id", courseId);
         mDialog.setArguments(args);
         return mDialog;
@@ -49,7 +48,6 @@ public class UpdateCourseDialog extends android.support.v4.app.DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         courseName = getArguments().getString("Name");
-        courseSemester = getArguments().getString("Semester");
         itemId = getArguments().getLong("Id");
 
         inflater = getActivity().getLayoutInflater();
@@ -59,10 +57,8 @@ public class UpdateCourseDialog extends android.support.v4.app.DialogFragment {
         builder.setTitle("Update Course");
 
         editName = (EditText) view.findViewById(R.id.editText_update_name);
-        editSemester = (EditText) view.findViewById(R.id.editText_update_semester);
 
         editName.setText(courseName);
-        editSemester.setText(courseSemester);
 
 
         builder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
@@ -71,9 +67,8 @@ public class UpdateCourseDialog extends android.support.v4.app.DialogFragment {
                 courseRepo = new CourseRepo();
                 course = new Course();
                 courseName = editName.getText().toString();
-                courseSemester = editSemester.getText().toString();
                 course.setCourseName(courseName);
-                course.setSemester(courseSemester);
+
                 try {
                     courseRepo.updateRow(itemId, course);
                 }catch (Exception e ){

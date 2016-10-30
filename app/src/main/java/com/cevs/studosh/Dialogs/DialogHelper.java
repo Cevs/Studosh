@@ -46,5 +46,10 @@ public class DialogHelper {
         mUpdateContentDialog.show(fragmentManager,"UpdateContentDialog");
     }
 
+    public void setSemesterDialog(){
+        SemesterDialog dialog = new SemesterDialog();
+        dialog.show(fragmentManager,"SemesterDialog");
+    }
+
 
 }

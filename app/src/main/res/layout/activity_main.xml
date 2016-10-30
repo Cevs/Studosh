@@ -24,15 +24,39 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
             <include
                 layout = "@layout/nav_header_main"/>
 
-            <ListView
+            <!--Ovdje dodavat buttone i osalo sto treba -->
+
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/course_list">
-            </ListView>
+                android:layout_height="wrap_content">
+
+                <ListView
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:id="@+id/course_list">
+                </ListView>
+
+                <!-- expandable view - Tu ce ici semestri -->
+                <ExpandableListView
+                    android:id="@+id/expandable_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/headerColor">
+                </ExpandableListView>
+
+
+            </LinearLayout>
+
+
+
+
+
+
+
 
         </LinearLayout>
 

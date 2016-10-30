@@ -17,6 +17,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -29,7 +31,9 @@ import com.cevs.studosh.InitialFragments.InitialPresenceFragment;
 import com.cevs.studosh.data.DBHelper;
 import com.cevs.studosh.data.DataBaseManager;
 import com.cevs.studosh.data.model.Course;
+import com.cevs.studosh.data.model.Semester;
 import com.cevs.studosh.data.repo.CourseRepo;
+import com.cevs.studosh.data.repo.SemesterRepo;
 import com.cevs.studosh.fragments.CriteriaFragment;
 import com.cevs.studosh.fragments.GeneralFragment;
 import com.cevs.studosh.fragments.PagerItem;
@@ -39,6 +43,9 @@ import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
 import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
@@ -70,6 +77,12 @@ public class MainActivity extends AppCompatActivity
     FloatingActionMenu actionMenu;
 
     long courseId;
+    ExpandableListAdapter expandableListAdapter;
+    ExpandableListView expandableListView;
+    List<String> listDataHeader;
+    HashMap<String, List<String>> listDataChild;
+
+
 
 
     @Override
@@ -180,10 +193,27 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        Button addNewSemester = (Button) drawer.findViewById(R.id.button_add_semester);
+        addNewSemester.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDialogHelper.setSemesterDialog();
+            }
+        });
+
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
         populateList();
+
+
+        createNavigationDrawerSemesterList();
+        expandableListView = (ExpandableListView) findViewById(R.id.expandable_list);
+        expandableListAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
+        expandableListView.setAdapter(expandableListAdapter);
+
+
+
     }
 
 
@@ -243,9 +273,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
-
-
     public void populateList(){
         mCourseRepo = new CourseRepo();
         cursor = mCourseRepo.getAllRows();
@@ -267,6 +294,78 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
+
+    public void createNavigationDrawerSemesterList(){
+        //ArrayList of semester names that will be shown as main item
+        listDataHeader = new ArrayList<String>();
+        //ArrayList of courses that will be shown as subitem of specific semester
+        listDataChild = new HashMap<String, List<String>>();
+        List<String> courseNames;
+        long foreignKey;
+
+        SemesterRepo semesterRepo = new SemesterRepo();
+        CourseRepo courseRepo = new CourseRepo();
+        Cursor semesterCursor = semesterRepo.getAllRows();
+        Cursor courseCursor;
+
+        if(semesterCursor.getCount()>0) {
+            //Number of current item in listDataHeader
+            int i = 0;
+            semesterCursor.moveToFirst();
+            do{
+                courseNames = new ArrayList<String>();
+                listDataHeader.add(semesterCursor.getString(semesterCursor.getColumnIndex(Semester.COLUMN_SemesterName)));
+                foreignKey = semesterCursor.getLong(semesterCursor.getColumnIndex(Semester.COLUMN_SemesterId));
+                //get all rows from db that have foreign key equal to id of current semester
+                courseCursor = courseRepo.getRows(foreignKey);
+
+                if (courseCursor.getCount() > 0) {
+                    //If there is any course in that semester do...
+                    courseCursor.moveToFirst();
+                    do{
+                        courseNames.add(courseCursor.getString(courseCursor.getColumnIndex(Course.COLUMN_CourseName)));
+                    }while(courseCursor.moveToNext());
+
+                    Collections.sort(courseNames);
+                    listDataChild.put(listDataHeader.get(i), courseNames);
+                }else{
+                    //If current semester don't have courses, set  empty ArrayList
+                    listDataChild.put(listDataHeader.get(i), new ArrayList<String>());
+                }
+                //go to the next item in listDataHeader
+               i++;
+            }while(semesterCursor.moveToNext());
+            semesterCursor.close();
+            courseCursor.close();
+            Collections.sort(listDataHeader);
+        }
+    }
+
+    public void updateNavigationDrawerSemesterList(int semesterId, String courseName){
+        //Method for updating item in expandable list adapter that have new set of data
+        //the rest remains unchanged
+        //Its called after inserting new course in db (via courseDialog class)
+
+        int k = 0;
+        String cName = courseName;
+        ArrayList<String> names = new ArrayList<String>();
+        //-1 because array list of headers starts with index 0 while index in db starts with 1
+        int size = expandableListAdapter.getChildrenCount(semesterId-1);
+        if(size>0){
+            while(k<size){
+                String name = (String) expandableListAdapter.getChild(semesterId-1,k++);
+                names.add(name);
+            }
+        }
+        names.add(cName);
+        Collections.sort(names);
+        listDataChild.put(listDataHeader.get(semesterId-1), names);
+        expandableListAdapter.newData(listDataHeader,listDataChild);
+        expandableListView.setAdapter(expandableListAdapter);
+        expandableListAdapter.notifyDataSetChanged();
+    }
+
+
 
     @Override
     public void onBackPressed() {
@@ -306,7 +405,10 @@ public class MainActivity extends AppCompatActivity
         courseRepo = new CourseRepo();
 
         String courseName = cursor.getString(cursor.getColumnIndex(Course.COLUMN_CourseName));
-        String courseSemester = cursor.getString(cursor.getColumnIndex(Course.COLUMN_Semester));
+
+        //OVO OBRISAT !!!!!
+        //String courseSemester = cursor.getString(cursor.getColumnIndex(Course.COLUMN_Semester));
+        //OVO OBRISAT !!!!!
 
         //Managing the initialization  of fragments when deleting or updating
         int iid  = item.getItemId();
@@ -338,7 +440,10 @@ public class MainActivity extends AppCompatActivity
                 break;
             //When update course name or semester in db, load the changes in fragment
             case 2:
-                UpdateCourseDialog mUpdateCourseDialog = UpdateCourseDialog.newInstance(courseName,courseSemester,itemId);
+                //OVO OBRISAT !!!!!
+                //UpdateCourseDialog mUpdateCourseDialog = UpdateCourseDialog.newInstance(courseName,courseSemester,itemId);
+                //OVO OBRISAT !!!!!
+                UpdateCourseDialog mUpdateCourseDialog = UpdateCourseDialog.newInstance(courseName,itemId);
                 mUpdateCourseDialog.show(getSupportFragmentManager(),"Update course");
                 Toast.makeText(getBaseContext(),courseName + " Updated", Toast.LENGTH_SHORT).show();
                 break;
