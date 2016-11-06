@@ -13,7 +13,6 @@
 
     <string-array name="menuItems">
         <item>Delete</item>
-        <item>Delete All</item>
         <item>Update</item>
     </string-array>
 

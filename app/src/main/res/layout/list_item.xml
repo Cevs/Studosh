@@ -25,6 +25,7 @@
                 android:textColor="@color/white"
                 android:id="@+id/expandable_list_item" />
 
+
             <ImageView
                 android:layout_width="25dp"
                 android:layout_height="25dp"
@@ -32,6 +33,7 @@
                 android:layout_marginLeft="16dp"
                 app:srcCompat="@drawable/notebook"
                 android:id="@+id/courseImageList" />
+
 
         </RelativeLayout>
     </FrameLayout>

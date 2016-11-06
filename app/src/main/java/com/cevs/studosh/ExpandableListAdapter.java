@@ -21,12 +21,13 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     //header titles(semestar 1, semestar 2...)
     private  List<String> listDataHeader;
     // child data in format of header title, child title
-    private  HashMap<String, List<String>> listDataChild;
+    //private  HashMap<String, List<String>> listDataChild;
+    private HashMap<String, List<ChildPair>> listDataChild;
 
-    public ExpandableListAdapter(Context context, List<String> listDataHeader,
-                                 HashMap<String, List<String>> listDataChild)
-    {
-        this.context = context;
+
+
+    public ExpandableListAdapter(Context context, List<String> listDataHeader, HashMap<String, List<ChildPair>> listDataChild){
+       this.context = context;
         this.listDataHeader = listDataHeader;
         this.listDataChild = listDataChild;
     }
@@ -84,7 +85,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
-        final String childText = (String) getChild(groupPosition,childPosition);
+        //final String childText = (String) getChild(groupPosition,childPosition);
+        ChildPair object = (ChildPair) getChild(groupPosition,childPosition);
+
+        String childText =  object.getName();
+        Long id = object.getRowId();
 
         if(convertView == null){
             LayoutInflater inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -102,7 +107,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
-    public void newData(List<String> listDataHeader, HashMap<String, List<String>> listDataChild){
+    public void newData(List<String> listDataHeader, HashMap<String, List<ChildPair>> listDataChild){
         this.listDataHeader = listDataHeader;
         this.listDataChild = listDataChild;
     }

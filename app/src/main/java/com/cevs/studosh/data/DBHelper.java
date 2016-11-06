@@ -21,7 +21,7 @@ import com.cevs.studosh.data.repo.SemesterRepo;
 
 public class DBHelper  extends SQLiteOpenHelper{
 
-    private static final int DATABASE_VERSION =15 ;
+    private static final int DATABASE_VERSION =19 ;
     private static final String DATABASE_NAME= "studoshDB.db";
     private Context context;
 

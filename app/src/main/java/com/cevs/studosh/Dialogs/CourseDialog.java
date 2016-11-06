@@ -25,6 +25,9 @@ import com.cevs.studosh.data.model.Semester;
 import com.cevs.studosh.data.repo.CourseRepo;
 import com.cevs.studosh.data.repo.SemesterRepo;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Created by TOSHIBA on 28.09.2016..
  */
@@ -38,7 +41,6 @@ public class CourseDialog extends DialogFragment {
     Spinner spinner;
 
     long semesterId;
-    int semester;
     String name;
 
     @Override
@@ -55,6 +57,7 @@ public class CourseDialog extends DialogFragment {
         Cursor cursor = semesterRepo.getAllRows();
 
         String[] semesterNames = new String[]{Semester.COLUMN_SemesterName};
+
         int[]adapterRowViews = new int[]{R.id.spinnerItem};
 
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(),R.layout.spinner_item_layout,cursor,semesterNames,adapterRowViews,0);
@@ -95,7 +98,7 @@ public class CourseDialog extends DialogFragment {
                         Toast.makeText(getActivity(),"Kolegij dodan", Toast.LENGTH_SHORT).show();
                         ((MainActivity)getActivity()).populateList();
                         ((MainActivity)getActivity()).setFragments(courseId);
-                        ((MainActivity)getActivity()).updateNavigationDrawerSemesterList((int)semesterId,name);
+                        ((MainActivity)getActivity()).updateNavigationDrawerSemesterList((int)semesterId,name, courseId);
                     }
                     else
                         Toast.makeText(getActivity(),"Neuspjelo", Toast.LENGTH_SHORT).show();

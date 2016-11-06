@@ -4,10 +4,14 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.cevs.studosh.AdapterData;
@@ -15,23 +19,26 @@ import com.cevs.studosh.MainActivity;
 import com.cevs.studosh.R;
 import com.cevs.studosh.data.DataBaseManager;
 import com.cevs.studosh.data.model.Course;
+import com.cevs.studosh.data.model.Semester;
 import com.cevs.studosh.data.repo.CourseRepo;
+import com.cevs.studosh.data.repo.SemesterRepo;
 
 /**
  * Created by TOSHIBA on 01.10.2016..
  */
 
 public class UpdateCourseDialog extends android.support.v4.app.DialogFragment {
-    String courseName;
-    String courseSemester;
-    Long itemId;
+    String oldName;
+    String newName;
+    Long rowId;
     Dialog dialog;
     LayoutInflater inflater;
     View view;
     CourseRepo courseRepo;
     Course course;
     EditText editName;
-    EditText editSemester;
+    Spinner spinner;
+    int semesterId;
 
     public UpdateCourseDialog(){}
 
@@ -47,44 +54,72 @@ public class UpdateCourseDialog extends android.support.v4.app.DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        courseName = getArguments().getString("Name");
-        itemId = getArguments().getLong("Id");
+        oldName = getArguments().getString("Name");
+        rowId = getArguments().getLong("Id");
+
+
 
         inflater = getActivity().getLayoutInflater();
-        view = inflater.inflate(R.layout.update_course_dialog,null);
+        view = inflater.inflate(R.layout.course_dialog,null);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view);
-        builder.setTitle("Update Course");
+        builder.setTitle("Ažuriraj kolegij");
 
-        editName = (EditText) view.findViewById(R.id.editText_update_name);
+        editName = (EditText) view.findViewById(R.id.editText_course);
+        editName.setText(oldName);
 
-        editName.setText(courseName);
+        spinner = (Spinner) view.findViewById(R.id.spinner);
 
+        SemesterRepo semesterRepo = new SemesterRepo();
+        Cursor cursor = semesterRepo.getAllRows();
 
-        builder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
+        String[] semesterNames = new String[]{Semester.COLUMN_SemesterName};
+
+        int[]adapterRowViews = new int[]{R.id.spinnerItem};
+
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(),R.layout.spinner_item_layout,cursor,semesterNames,adapterRowViews,0);
+        //defined layout for spinner items (not spinner itself)
+        adapter.setDropDownViewResource(R.layout.spinner_item_layout);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                courseRepo = new CourseRepo();
-                course = new Course();
-                courseName = editName.getText().toString();
-                course.setCourseName(courseName);
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
+                semesterId = (int)id;
+            }
 
-                try {
-                    courseRepo.updateRow(itemId, course);
-                }catch (Exception e ){
-                    Toast.makeText(getActivity(),e+"",Toast.LENGTH_LONG).show();
-                }
-                ((MainActivity)getActivity()).populateList();
-                ((MainActivity)getActivity()).setFragments(itemId);
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
         });
 
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+        builder.setPositiveButton("Uredu", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Toast.makeText(getActivity(),"Canceled",Toast.LENGTH_SHORT).show();
+                courseRepo = new CourseRepo();
+                course = new Course();
+                newName = editName.getText().toString();
+                course.setCourseName(newName);
+                course.setSemesterId(semesterId);
+
+                try{
+                    courseRepo.updateRow(rowId, course);
+                }catch (Exception e){
+                    Toast.makeText(getActivity(),e+"",Toast.LENGTH_LONG).show();
+                }
+
+                ((MainActivity)getActivity()).createExpandableList();
+                ((MainActivity)getActivity()).populateList();
             }
+        });
+
+
+
+
+        builder.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i){}
         });
 
         dialog = builder.create();

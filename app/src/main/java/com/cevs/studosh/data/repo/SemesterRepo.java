@@ -16,7 +16,8 @@ public class SemesterRepo {
     public static String createTable() {
         return "CREATE TABLE " + Semester.TABLE_Name + "("
                 + Semester.COLUMN_SemesterId + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + Semester.COLUMN_SemesterName + " TEXT); ";
+                + Semester.COLUMN_SemesterName + " TEXT, "
+                + Semester.COLUMN_SemesterNumber + " TEXT );";
     }
 
     public long insertRow(Semester semester){
@@ -24,6 +25,7 @@ public class SemesterRepo {
         SQLiteDatabase db = DataBaseManager.getInstance().openDatabase();
         ContentValues values = new ContentValues();
         values.put(Semester.COLUMN_SemesterName, semester.getSemesterName());
+        values.put(Semester.COLUMN_SemesterNumber, semester.getSemesterNumber());
         semesterId  = db.insert(Semester.TABLE_Name,null,values);
         DataBaseManager.getInstance().closeDatabase();
         return semesterId;
@@ -80,6 +82,7 @@ public class SemesterRepo {
         String where = Semester.COLUMN_SemesterId + " = " + rowId;
         ContentValues newValues = new ContentValues();
         newValues.put(Semester.COLUMN_SemesterName, semester.getSemesterName());
+        newValues.put(Semester.COLUMN_SemesterNumber,semester.getSemesterNumber());
 
         if(db.update(Semester.TABLE_Name,newValues, where, null)==-1){
             DataBaseManager.getInstance().closeDatabase();
@@ -91,9 +94,9 @@ public class SemesterRepo {
         }
     }
 
-    public boolean findRow(String semesterName){
+    public boolean findRow(String semesterNumber){
         SQLiteDatabase db = DataBaseManager.getInstance().openDatabase();
-        String where = Semester.COLUMN_SemesterName + " = '" + semesterName +"'";
+        String where = Semester.COLUMN_SemesterNumber + " = '" + semesterNumber +"'";
 
         Cursor c  = db.query(true,Semester.TABLE_Name,Semester.ALL_ROWS,where,null,null,null,null,null);
         boolean exist = (c.getCount()>0);
