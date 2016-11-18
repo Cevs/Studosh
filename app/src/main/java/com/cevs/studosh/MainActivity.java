@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -44,21 +45,18 @@ import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
 import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
-    CourseRepo mCourseRepo;
     android.support.v4.app.FragmentManager supportFragmentManager;
     FragmentManager fragmentManager;
     CourseRepo courseRepo;
-    String[] fromFieldNames;
     String[] menuItems;
-    SimpleCursorAdapter simpleCursorAdapter;
     Cursor cursor;
-    long itemId;
 
     MyPagerAdapter mPagerAdapter;
     GeneralFragment generalFragment;
@@ -97,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         DBHelper dbHelper = new DBHelper(this);
         DataBaseManager.initializeInstance(dbHelper);
 
-        SemesterRepo semesterRepo = new SemesterRepo();
+        final SemesterRepo semesterRepo = new SemesterRepo();
 
         fragmentManager = getFragmentManager();
         supportFragmentManager = getSupportFragmentManager();
@@ -146,20 +144,29 @@ public class MainActivity extends AppCompatActivity {
         subButton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mDialogHelper.setCourseDialog();
-                actionMenu.close(true);
+
+                if(((semesterRepo.getAllRows()).getCount())>0){
+                    mDialogHelper.setCourseDialog();
+                    actionMenu.close(true);
+                }
+                else
+                    Toast.makeText(getBaseContext(),"Treba unijeti barem jedan semestar", Toast.LENGTH_SHORT).show();
 
             }
         });
         subButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mDialogHelper = new DialogHelper(getBaseContext(),courseId);
-                mDialogHelper.setContentDialog();
-                mViewPager.setCurrentItem(1);
-                actionMenu.close(true);
 
-
+                if(((courseRepo.getAllRows()).getCount())>0){
+                    mDialogHelper = new DialogHelper(getBaseContext(),courseId);
+                    mDialogHelper.setContentDialog();
+                    mViewPager.setCurrentItem(1);
+                    actionMenu.close(true);
+                }
+                else
+                    Toast.makeText(getBaseContext(),"Treba unijeti barem jedan kolegij", Toast.LENGTH_SHORT).show();
+                
             }
         });
         subButton3.setOnClickListener(new View.OnClickListener() {
@@ -190,10 +197,11 @@ public class MainActivity extends AppCompatActivity {
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        //drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        Button addNewSemester = (Button) drawer.findViewById(R.id.button_add_semester);
+        ImageButton addNewSemester = (ImageButton) findViewById(R.id.button_add);
         addNewSemester.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -201,9 +209,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        createExpandableList();
-        populateList();
+        ImageButton deleteSemesters = (ImageButton) findViewById(R.id.button_delete);
+        deleteSemesters.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               mDialogHelper.setDeleteDialog();
+            }
+        });
 
+        createExpandableList();
     }
 
 
@@ -261,12 +275,15 @@ public class MainActivity extends AppCompatActivity {
         }
         mPagerAdapter.setPagerItems(pagerItems);
         mPagerAdapter.notifyDataSetChanged();
-    }
+}
 
 
     public void populateList(){
 
         expandableListView = (ExpandableListView) findViewById(R.id.expandable_list);
+        expandableListView.setIndicatorBounds(700,0);
+
+        Collections.sort(listDataHeader);
         expandableListAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
         expandableListView.setAdapter(expandableListAdapter);
         expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
@@ -323,6 +340,7 @@ public class MainActivity extends AppCompatActivity {
                         children.add(pair);
                     }while(courseCursor.moveToNext());
 
+                    sortAscendingChildren((ArrayList<ChildPair>) children);
                     listDataChild.put(listDataHeader.get(i), children);
                 }else{
                     //If current semester don't have courses, set  empty ArrayList
@@ -333,9 +351,11 @@ public class MainActivity extends AppCompatActivity {
             }while(semesterCursor.moveToNext());
             semesterCursor.close();
             courseCursor.close();
-            Collections.sort(listDataHeader);
+
         }
+        populateList();
     }
+
 
     //Inserting new element in navigationDrawerSemesterList
     //Expandable list
@@ -349,11 +369,11 @@ public class MainActivity extends AppCompatActivity {
         Long id = rowId;
         ArrayList<ChildPair> children = new ArrayList<ChildPair>();
         //-1 because array list of headers starts with index 0 while index in db starts with 1
-        int size = expandableListAdapter.getChildrenCount(semesterId-1);
+        int size = expandableListAdapter.getChildrenCount(semesterId);
         if(size>0){
             while(k<size){
                 pair = new ChildPair();
-                ChildPair object = (ChildPair) expandableListAdapter.getChild(semesterId-1,k++);
+                ChildPair object = (ChildPair) expandableListAdapter.getChild(semesterId,k++);
                 pair.setName(object.getName());
                 pair.setRowId(object.getRowId());
                 children.add(pair);
@@ -364,7 +384,8 @@ public class MainActivity extends AppCompatActivity {
         pair.setName(cName);
         pair.setRowId(rowId);
         children.add(pair);
-        listDataChild.put(listDataHeader.get(semesterId-1), children);
+        sortAscendingChildren(children);
+        listDataChild.put(listDataHeader.get(semesterId), children);
         expandableListAdapter.newData(listDataHeader,listDataChild);
         expandableListView.setAdapter(expandableListAdapter);
         expandableListAdapter.notifyDataSetChanged();
@@ -376,15 +397,16 @@ public class MainActivity extends AppCompatActivity {
 
         listDataHeader.add(nSemester);
         listDataChild.put(nSemester,new ArrayList<ChildPair>());
-
+        //Tu komparator
+        sortAscendingHeader(listDataHeader);
         expandableListAdapter.newData(listDataHeader,listDataChild);
         expandableListView.setAdapter(expandableListAdapter);
         expandableListAdapter.notifyDataSetChanged();
 
     }
 
-    //Updating only header with changes after the deletion of course
-    public void deleteItem(int groupPosition, long foreignKey){
+    //Updating only the specific header with changes after the deletion of course
+    public void deleteItem(int groupPosition, int deletedChildPosition, long foreignKey){
         ChildPair pair;
         int k = 0;
         ArrayList<ChildPair> children = new ArrayList<ChildPair>();
@@ -409,6 +431,7 @@ public class MainActivity extends AppCompatActivity {
 
             listDataChild.put(listDataHeader.get(groupPosition), children);
             cursor.close();
+
         }
         else{
             listDataChild.put(listDataHeader.get(groupPosition), new ArrayList<ChildPair>());
@@ -418,6 +441,14 @@ public class MainActivity extends AppCompatActivity {
         expandableListAdapter.newData(listDataHeader,listDataChild);
         expandableListView.setAdapter(expandableListAdapter);
         expandableListAdapter.notifyDataSetChanged();
+
+        int childSize = expandableListAdapter.getChildrenCount(groupPosition);
+        if(childSize>0){
+
+            setFragments(getItemId(groupPosition,deletedChildPosition));
+        }
+        else
+            setInitialFragments();
     }
 
 
@@ -458,47 +489,80 @@ public class MainActivity extends AppCompatActivity {
             menu.add(0,DELETE_COURSE,0,menuItems[0]);
             menu.add(0,UPDATE_COURSE,0,menuItems[1]);
 
+
         }
     }
     @Override
     public boolean onContextItemSelected(MenuItem menuItem) {
-        ExpandableListView.ExpandableListContextMenuInfo info =
-                (ExpandableListView.ExpandableListContextMenuInfo) menuItem.getMenuInfo();
 
-        int groupPosition = 0;
-        int childPosition = 0;
+        if(menuItem.getGroupId()==0)
+        {
+            ExpandableListView.ExpandableListContextMenuInfo info =
+                    (ExpandableListView.ExpandableListContextMenuInfo) menuItem.getMenuInfo();
 
-        int type = ExpandableListView.getPackedPositionType(info.packedPosition);
-        if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD){
-            groupPosition = ExpandableListView.getPackedPositionGroup(info.packedPosition);
-            childPosition = ExpandableListView.getPackedPositionChild(info.packedPosition);
-        }
+            int groupPosition = 0;
+            int childPosition = 0;
 
-        ChildPair object = (ChildPair) expandableListAdapter.getChild(groupPosition,childPosition);
-        String course = object.getName();
-        long id = object.getRowId();
-
-        switch (menuItem.getItemId()){
-            case 0:{
-                courseRepo = new CourseRepo();
-                Cursor cursor  = courseRepo.getRow(id);
-                courseRepo.deleteRow(id);
-                long foreignKey = cursor.getLong(cursor.getColumnIndex(Course.COLUMN_SemesterId));
-                deleteItem(groupPosition, foreignKey);
-                Toast.makeText(getBaseContext(),"DELETE "+course,Toast.LENGTH_SHORT).show();
-                break;
+            int type = ExpandableListView.getPackedPositionType(info.packedPosition);
+            if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD){
+                groupPosition = ExpandableListView.getPackedPositionGroup(info.packedPosition);
+                childPosition = ExpandableListView.getPackedPositionChild(info.packedPosition);
             }
 
-            case 1:{
-                UpdateCourseDialog mUpdateCourseDialog = UpdateCourseDialog.newInstance(course,id);
-                mUpdateCourseDialog.show(getSupportFragmentManager(),"Update course");
-                Toast.makeText(getBaseContext(),course + " Updated", Toast.LENGTH_SHORT).show();
-                break;
+            ChildPair object = (ChildPair) expandableListAdapter.getChild(groupPosition,childPosition);
+            String course = object.getName();
+            long id = object.getRowId();
+
+            int iid = menuItem.getItemId();
+            switch (iid){
+                case 0:{
+                    courseRepo = new CourseRepo();
+                    Cursor cursor  = courseRepo.getRow(id);
+                    courseRepo.deleteRow(id);
+                    long foreignKey = cursor.getLong(cursor.getColumnIndex(Course.COLUMN_SemesterId));
+                    deleteItem(groupPosition, childPosition, foreignKey);
+                    expandableListView.expandGroup(groupPosition);
+                    Toast.makeText(getBaseContext(),"DELETE "+course,Toast.LENGTH_SHORT).show();
+                    break;
+                }
+
+                case 1:{
+                    expandableListView.expandGroup(groupPosition);
+                    UpdateCourseDialog mUpdateCourseDialog = UpdateCourseDialog.newInstance(course,id);
+                    mUpdateCourseDialog.show(getSupportFragmentManager(),"Update course");
+                    Toast.makeText(getBaseContext(),course + " Updated", Toast.LENGTH_SHORT).show();
+                    break;
+                }
+                default:
+                    return super.onContextItemSelected(menuItem);
             }
-            default:
-                return super.onContextItemSelected(menuItem);
         }
+
         return true;
+    }
+
+
+    //method that returns rowId of next child in list
+    //if delete item at position >1 return deletedPosition +1
+    //else return 1
+    public long getItemId(int groupPosition, int deletedChildPosition){
+
+        int previousChild;
+        int nextChild;
+        ChildPair object;
+        if (deletedChildPosition>0){
+            previousChild = deletedChildPosition - 1;
+            object = (ChildPair) expandableListAdapter.getChild(groupPosition,previousChild);
+
+            return object.getRowId();
+        }
+        else{
+            nextChild = deletedChildPosition;
+            object = (ChildPair) expandableListAdapter.getChild(groupPosition,nextChild);
+
+            return object.getRowId();
+        }
+
     }
 
     //Function returnItemId takes care of proper indexing course entries
@@ -527,6 +591,37 @@ public class MainActivity extends AppCompatActivity {
         else
             return -1;
 
+    }
+
+    public void sortAscendingHeader(List<String> headers){
+        Collections.sort(headers, new Comparator<String>() {
+            @Override
+            public int compare(String header1, String header2) {
+                if(header1.length()>header2.length())
+                    return 1;
+                else if (header1.length()<header2.length())
+                    return -1;
+
+                return header1.compareToIgnoreCase(header2);
+            }
+        });
+    }
+
+    public void sortAscendingChildren(ArrayList<ChildPair> children){
+        //Sorting in ascending order
+        Collections.sort(children, new Comparator<ChildPair>() {
+            @Override
+            public int compare(ChildPair pair1, ChildPair pair2) {
+
+                if((((pair1.getName().length())>(pair2.getName().length()))))
+                    return 1;
+                else if ((((pair1.getName().length())<(pair2.getName().length()))))
+                    return -1;
+
+                return pair1.getName().compareToIgnoreCase(pair2.getName());
+
+            }
+        });
     }
 
 

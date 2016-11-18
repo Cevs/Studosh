@@ -19,10 +19,26 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true">
 
-       <LinearLayout
+
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Općenito"
+            android:layout_marginTop="125dp"
+            android:textSize="25sp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/black"
+            android:layout_marginLeft="5dp"/>
+
+
+
+        <LinearLayout
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
-           android:layout_marginTop="125dp"
+           android:layout_marginTop="165dp"
            android:layout_marginLeft="7dp"
            android:layout_marginRight="7dp"
            android:background="@drawable/my_border">
@@ -54,7 +70,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="165dp"
+            android:layout_marginTop="205dp"
             android:layout_marginLeft="7dp"
             android:layout_marginRight="7dp"
             android:background="@drawable/my_border">
@@ -87,7 +103,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="205dp"
+            android:layout_marginTop="245dp"
             android:layout_marginLeft="7dp"
             android:layout_marginRight="7dp"
             android:background="@drawable/my_border">
@@ -118,7 +134,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="245dp"
+            android:layout_marginTop="285dp"
             android:layout_marginLeft="7dp"
             android:layout_marginRight="7dp"
             android:background="@drawable/my_border">
@@ -149,7 +165,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="285dp"
+            android:layout_marginTop="325dp"
             android:layout_marginLeft="7dp"
             android:layout_marginRight="7dp"
             android:background="@drawable/my_border">
@@ -195,7 +211,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="325dp"
+            android:layout_marginTop="365dp"
             android:layout_marginLeft="7dp"
             android:layout_marginRight="7dp"
             android:background="@drawable/my_border">
@@ -227,7 +243,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="365dp"
+            android:layout_marginTop="405dp"
             android:layout_marginLeft="7dp"
             android:layout_marginRight="7dp"
             android:background="@drawable/my_border">

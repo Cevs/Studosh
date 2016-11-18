@@ -109,6 +109,7 @@ public class UpdateCourseDialog extends android.support.v4.app.DialogFragment {
                     Toast.makeText(getActivity(),e+"",Toast.LENGTH_LONG).show();
                 }
 
+                ((MainActivity)getActivity()).setFragments(rowId);
                 ((MainActivity)getActivity()).createExpandableList();
                 ((MainActivity)getActivity()).populateList();
             }

@@ -100,10 +100,9 @@ public class CriteriaFragment extends Fragment {
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu,v,menuInfo);
-        final int DELETE_CONTENT = 3;
-        final int DELETE_ALL_CONTENT = 4;
-        final int UPDATE_CONTENT = 5;
+        //super.onCreateContextMenu(menu,v,menuInfo);
+        final int DELETE_CONTENT = 0;
+        final int UPDATE_CONTENT = 1;
 
         v.setSelected(true);
 
@@ -127,9 +126,8 @@ public class CriteriaFragment extends Fragment {
 
             menuItems = getResources().getStringArray(R.array.menuItems);
 
-            menu.add(0,DELETE_CONTENT,0,menuItems[0]);
-            menu.add(0,DELETE_ALL_CONTENT,0,menuItems[1]);
-            menu.add(0,UPDATE_CONTENT,0,menuItems[2]);
+            menu.add(1,DELETE_CONTENT,0,menuItems[0]);
+            menu.add(1,UPDATE_CONTENT,0,menuItems[1]);
 
 
             for(int i = 0; i<menu.size(); i++){
@@ -140,21 +138,15 @@ public class CriteriaFragment extends Fragment {
                         int iid = menuItem.getItemId();
 
                         switch (iid){
-                            case 3:
+                            case 0:
                                 contentRepo.deleteRow(getItemId(position));
                                 Toast.makeText(getView().getContext(),title+" obrisan",Toast.LENGTH_SHORT).show();
                                 adapterData.init();
                                 ((MainActivity)getActivity()).setFragments(courseId);
 
                                 break;
-                            case 4:
-                                contentRepo.deleteAllRows(courseId);
-                                Toast.makeText(getView().getContext(),"Kriteriji obrisani",Toast.LENGTH_SHORT).show();
-                                adapterData.init();
-                                ((MainActivity)getActivity()).setFragments(courseId);
 
-                                break;
-                            case 5:
+                            case 1:
                                 dialogHelper.setUpdateContentDialog(title,courseId);
                                 Toast.makeText(getActivity(),title + " ažurirano",Toast.LENGTH_SHORT).show();
 

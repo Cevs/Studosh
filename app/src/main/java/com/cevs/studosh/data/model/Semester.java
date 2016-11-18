@@ -11,11 +11,17 @@ public class Semester {
     public static final String COLUMN_SemesterNumber = "Number";
     public static final String[] ALL_ROWS = {Semester.COLUMN_SemesterId, Semester.COLUMN_SemesterName, Semester.COLUMN_SemesterNumber};
 
-
+    private long id;
     private String name;
     private String number;
 
+    public void setId(long id){
+        this.id = id;
+    }
 
+    public long getId(){
+        return id;
+    }
     public void setSemesterName(String name){
         this.name = name;
     }
@@ -30,5 +36,11 @@ public class Semester {
 
     public String getSemesterNumber(){
         return number;
+    }
+
+    //This method using ArrayAdapter in class CourseDialog
+    //It returns name of current Semester while filling adapter
+    public String toString(){
+        return name;
     }
 }

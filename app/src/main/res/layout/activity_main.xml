@@ -24,56 +24,57 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
             <include
                 layout = "@layout/nav_header_main"/>
 
-            <!--Ovdje dodavat buttone i osalo sto treba -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:layout_marginRight="5dp"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_selector"
+                    app:srcCompat ="@drawable/ic_delete"
+                    android:id="@+id/button_delete"/>
+
+                <ImageButton
+                    android:layout_marginLeft="5dp"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_selector"
+                    app:srcCompat = "@drawable/ic_folder_add"
+                    android:id = "@+id/button_add"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_marginTop="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kolegiji"
+                android:textSize="20sp"
+                android:layout_gravity="center"
+                android:textColor="@color/black"/>
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="300dp">
-
-
-                <!-- expandable view - Tu ce ici semestri -->
-                <ExpandableListView
-                    android:id="@+id/expandable_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                </ExpandableListView>
-
+                android:layout_height="2dp"
+                android:background="@color/black">
             </LinearLayout>
 
-            <LinearLayout
+            <ExpandableListView
+                android:layout_marginTop="5dp"
+                android:id="@+id/expandable_list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Ostalo"
-                    android:layout_marginLeft="10dp"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:background="@color/black"/>
-
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Dodaj semestar"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:layout_marginLeft="10dp"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Obriši sve"
-                android:textSize="20sp"
-                android:textColor="@color/black"
-                android:layout_marginLeft="10dp"/>
+                android:layout_height="match_parent">
+            </ExpandableListView>
 
         </LinearLayout>
 

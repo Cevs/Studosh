@@ -7,15 +7,17 @@
     <color name="mainColor">#324A5E</color>
     <color name="colorAccent">#FF4081</color>
     <color name="transparentColor">#CFFFFFFF</color>
-    <color name="frameColor">#A0C0C1C1</color>
+    <color name="frameColor">#90DBDBDB</color>
     <color name="navigationTabStrip">#DDAE36</color>
     <color name="generalFragment">#A1DDAE36</color>
     <drawable name="selectItem">#CFDDAE36</drawable>
     <color name="black">#424242</color>
     <color name="navigationDrawerItem">#E4E4E4</color>
     <color name="lightGray">#E0E0E0</color>
+    <color name="NavigationDrawerButtons">#E5E5E5</color>
     <drawable name="contentItem">#E4E4E4</drawable>
     <color name="transparent">#00FFFFFF</color>
     <color name="white">#F9F9F9</color>
+    <color name="expandableItem">#DBDBDB</color>
 
 </resources>

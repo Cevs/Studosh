@@ -51,5 +51,9 @@ public class DialogHelper {
         dialog.show(fragmentManager,"SemesterDialog");
     }
 
+    public void setDeleteDialog(){
+        DeleteDialog dialog = new DeleteDialog();
+        dialog.show(fragmentManager,"DeleteDialog");
+    }
 
 }
