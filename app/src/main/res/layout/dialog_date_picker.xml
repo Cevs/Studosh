@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <DatePicker
+        android:layout_width="wrap_content"
+        android:layout_height="400dp"
+        android:id="@+id/datePicker"
+        android:datePickerMode="calendar"
+        android:spinnersShown="false"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/firstSet"
+        android:layout_below="@+id/datePicker">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Prisustvovao"
+            android:id = "@+id/button_present"/>
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Potpisan"
+            android:id="@+id/button_signed"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/firstSet">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Odsutan"
+            android:id="@+id/button_absent"/>
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Nepotisan"
+            android:id="@+id/button_unsigned"/>
+    </LinearLayout>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_paper"
+        android:background="@color/transparent"
+        android:layout_alignParentTop="true"
+        android:layout_alignEnd="@+id/datePicker"
+        android:layout_marginEnd="0dp"
+        android:layout_marginTop="0dp"
+        android:id="@+id/imageButton_cancel" />
+
+
+</RelativeLayout>

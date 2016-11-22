@@ -166,14 +166,21 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else
                     Toast.makeText(getBaseContext(),"Treba unijeti barem jedan kolegij", Toast.LENGTH_SHORT).show();
-                
+
             }
         });
         subButton3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mViewPager.setCurrentItem(2);
-                actionMenu.close(true);
+
+                if(((courseRepo.getAllRows()).getCount())>0){
+                    mDialogHelper = new DialogHelper(getBaseContext(),courseId);
+                    mDialogHelper.setDateDialog();
+                    mViewPager.setCurrentItem(2);
+                    actionMenu.close(true);
+                }
+                else
+                    Toast.makeText(getBaseContext(),"Treba unijeti barem jedan kolegij",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -197,7 +204,6 @@ public class MainActivity extends AppCompatActivity {
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        //drawer.setDrawerListener(toggle);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 

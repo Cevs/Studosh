@@ -1,36 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/frameColor">
 
-
-    <ImageView
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        app:srcCompat="@drawable/calendar_1"
-        android:layout_centerInParent="true"
-        android:id="@+id/imageView6" />
 
     <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/frameColor">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp">
 
-        <RelativeLayout
+        <TextView
+            android:background="@drawable/button_selector"
+            android:text="dd.mm.yyyy"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <TextView
-                android:text="Prisutnost"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView3"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="213dp" />
+            android:layout_height="wrap_content"
+            android:id="@+id/date"
+            android:textColor="@color/black"
+            android:textSize="25sp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="center" />
 
-
-        </RelativeLayout>
-
+        <com.github.sundeepk.compactcalendarview.CompactCalendarView
+            android:layout_marginTop="50dp"
+            android:id="@+id/compactcalendar_view"
+            android:layout_below="@id/date"
+            android:layout_width="wrap_content"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            android:layout_height="250dp"
+            app:compactCalendarTextSize="17sp"
+            app:compactCalendarBackgroundColor="@color/white"
+            app:compactCalendarTextColor="@color/black"
+            app:compactCalendarCurrentSelectedDayBackgroundColor="@color/transparentColor"
+            app:compactCalendarCurrentDayBackgroundColor="@color/navigationTabStrip"
+            app:compactCalendarMultiEventIndicatorColor="#fff" />
     </FrameLayout>
 
 

@@ -23,4 +23,14 @@
         <item>Kriteriji</item>
         <item>Prisutnost</item>
     </string-array>
+
+    <string-array name="daysOfWeek">
+        <item>Pon</item>
+        <item>Uto</item>
+        <item>Sri</item>
+        <item>Čet</item>
+        <item>Pet</item>
+        <item>Sub</item>
+        <item>Ned</item>
+    </string-array>
 </resources>

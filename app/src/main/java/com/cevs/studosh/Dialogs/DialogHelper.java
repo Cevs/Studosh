@@ -56,4 +56,10 @@ public class DialogHelper {
         dialog.show(fragmentManager,"DeleteDialog");
     }
 
+    public void setDateDialog(){
+        //DateDialog dialog = DateDialog.newInstance(courseId);
+        MyDateDialogPicker dialog = MyDateDialogPicker.newInstance(courseId);
+        dialog.show(fragmentManager,"DatePickerDialog");
+    }
+
 }

@@ -36,5 +36,6 @@ dependencies {
     compile 'com.android.support:support-v4:24.2.0'
     compile 'com.oguzdev:CircularFloatingActionMenu:1.0.2'
     compile 'com.android.support:design:24.2.0'
+    compile 'com.github.sundeepk:compact-calendar-view:1.9.4'
 
 }

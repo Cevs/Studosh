@@ -10,13 +10,13 @@ public class Presence {
     public static final String TABLE_Name = "Presence";
     public static final String COLUMN_PresenceId = "_id";
     public static final String COLUMN_DateTime = "DateTime";
-    public static final String COLUMN_Present = "Present";
+    public static final String COLUMN_Presence = "Presence";
     public static final String COLUMN_CourseId = "CourseId";
-    public static final String[] ALL_ROWS = {COLUMN_PresenceId, COLUMN_DateTime, COLUMN_Present, COLUMN_CourseId};
+    public static final String[] ALL_ROWS = {COLUMN_PresenceId, COLUMN_DateTime, COLUMN_Presence, COLUMN_CourseId};
 
     private long id;
     private String dateTime;
-    private boolean present;
+    private int presence;
     private long foreignKey;
 
     public void setPresenceId(long id){
@@ -29,9 +29,9 @@ public class Presence {
 
     public String getDateTime(){return dateTime;}
 
-    public void setPresent(boolean present){this.present = present;}
+    public void setPresence(int presence){this.presence = presence;}
 
-    public boolean getPresent(){return present;}
+    public int getPresence(){return presence;}
 
     public void setForeignKey(long foreignKey){this.foreignKey = foreignKey;}
 

@@ -20,7 +20,7 @@ public class PresenceRepo {
         return "CREATE TABLE " + Presence.TABLE_Name + "("
                 + Presence.COLUMN_PresenceId + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + Presence.COLUMN_DateTime + " TEXT, "
-                + Presence.COLUMN_Present + " INTEGER, "
+                + Presence.COLUMN_Presence + " INTEGER, "
                 + Presence.COLUMN_CourseId + " INTEGER, "
                 + "FOREIGN KEY (" + Presence.COLUMN_CourseId + ") REFERENCES "
                 + Course.TABLE_Name + "(" + Course.COLUMN_CourseId + ") ON DELETE CASCADE);";
@@ -31,7 +31,7 @@ public class PresenceRepo {
         SQLiteDatabase db = DataBaseManager.getInstance().openDatabase();
         ContentValues values = new ContentValues();
         values.put(Presence.COLUMN_DateTime, presence.getDateTime());
-        values.put(Presence.COLUMN_Present, presence.getPresent());
+        values.put(Presence.COLUMN_Presence, presence.getPresence());
         values.put(Presence.COLUMN_CourseId, presence.getForeignKey());
 
         presenceId = db.insert(Presence.TABLE_Name, null, values);
@@ -64,9 +64,9 @@ public class PresenceRepo {
         DataBaseManager.getInstance().closeDatabase();
     }
 
-    public Cursor getAllRows(long presenceId){
+    public Cursor getAllRows(long courseId){
         SQLiteDatabase db = DataBaseManager.getInstance().openDatabase();
-        String where = Presence.COLUMN_PresenceId + " = " + presenceId;
+        String where = Presence.COLUMN_CourseId + " = " + courseId;
         Cursor c = db.query(true,Presence.TABLE_Name,Presence.ALL_ROWS,where,null,null,null,null,null,null);
         if (c!=null){
             c.moveToFirst();
@@ -75,8 +75,5 @@ public class PresenceRepo {
         return c;
     }
 
-    /*public boolean updateRow(Presence presence, long presenceId){
-
-    }*/
 
 }

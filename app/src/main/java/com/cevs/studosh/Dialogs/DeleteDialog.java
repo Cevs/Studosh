@@ -17,10 +17,7 @@ import com.cevs.studosh.data.repo.SemesterRepo;
  */
 
 public class DeleteDialog extends DialogFragment {
-    LayoutInflater inflater;
 
-
-    View view;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
