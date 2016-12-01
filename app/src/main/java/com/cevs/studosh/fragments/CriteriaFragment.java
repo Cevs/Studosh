@@ -82,6 +82,14 @@ public class CriteriaFragment extends Fragment {
             Toast.makeText(getContext(),e+"",Toast.LENGTH_LONG).show();
         }
 
+
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         arrayOfContentIds = new ArrayList<Long>(){};
 
 
@@ -91,16 +99,10 @@ public class CriteriaFragment extends Fragment {
 
         adapterData = new AdapterData(view, getActivity(), courseId);
         adapterData.init();
-
-
-        return view;
     }
-
-
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        //super.onCreateContextMenu(menu,v,menuInfo);
         final int DELETE_CONTENT = 0;
         final int UPDATE_CONTENT = 1;
 

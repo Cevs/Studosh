@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +42,7 @@ public class PresenceFragment extends Fragment {
     String day;
     String month;
     String year;
+    String sdf;
 
     static final int PRESENT = 1;
     static final int ABSENT = 2;
@@ -49,6 +51,8 @@ public class PresenceFragment extends Fragment {
 
     CompactCalendarView compactCalendarView;
     View rootView;
+
+    Date currentDate;
 
     public static PresenceFragment newInstance(long foreignKey){
         PresenceFragment fragment = new PresenceFragment();
@@ -62,6 +66,9 @@ public class PresenceFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         foreignKey = getArguments().getLong("Foreign Key");
+
+        if(savedInstanceState!=null)
+            currentDate = (Date) savedInstanceState.getSerializable("Current Date");
 
     }
 
@@ -77,45 +84,8 @@ public class PresenceFragment extends Fragment {
         }else{
             try{
 
-                String sdf  = new SimpleDateFormat("dd.MM.yyyy.").format(new Date());
-                // 1 - puni krug
-                // 2 - Obrub
-                // 3 - tocka
                 view = inflater.inflate(R.layout.fragment_presence,container,false);
                 compactCalendarView = (CompactCalendarView) view.findViewById(R.id.compactcalendar_view);
-                //compactCalendarView.setEventIndicatorStyle(2);
-
-                date = (TextView) view.findViewById(R.id.date);
-                date.setText(sdf);
-
-                String[] daysOfTheWeek = getResources().getStringArray(R.array.daysOfWeek);
-                compactCalendarView.setDayColumnNames(daysOfTheWeek);
-                compactCalendarView.setCurrentDayBackgroundColor(R.color.headerColor);
-                compactCalendarView.setEventIndicatorStyle(2);
-
-
-                presenceRepo = new PresenceRepo();
-                cursor = presenceRepo.getAllRows(foreignKey);
-
-                if(cursor.getCount()>0){
-                    getDates();
-                    getEvents();
-                }
-
-
-
-                compactCalendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
-                    @Override
-                    public void onDayClick(Date dateClicked) {
-                        selectedDate(dateClicked, date);
-                    }
-
-                    @Override
-                    public void onMonthScroll(Date firstDayOfNewMonth) {
-                        selectedDate(firstDayOfNewMonth, date);
-
-                    }
-                });
 
             }catch (InflateException e){
                 Toast.makeText(getContext(),e+"",Toast.LENGTH_LONG).show();
@@ -124,6 +94,55 @@ public class PresenceFragment extends Fragment {
 
 
         return view;
+    }
+
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // 1 - puni krug
+        // 2 - Obrub
+        // 3 - tocka
+        compactCalendarView.setEventIndicatorStyle(2);
+
+        String[] daysOfTheWeek = getResources().getStringArray(R.array.daysOfWeek);
+        compactCalendarView.setDayColumnNames(daysOfTheWeek);
+        date = (TextView) view.findViewById(R.id.date);
+
+        //Novo
+        if(currentDate != null){
+            compactCalendarView.setCurrentDate(currentDate);
+            sdf  = new SimpleDateFormat("dd.MM.yyyy.").format(currentDate);
+            date.setText(sdf);
+        }else{
+            sdf  = new SimpleDateFormat("dd.MM.yyyy.").format(new Date());
+            date.setText(sdf);
+        }
+
+        presenceRepo = new PresenceRepo();
+        cursor = presenceRepo.getAllRows(foreignKey);
+
+        if(cursor.getCount()>0){
+            getDates();
+            getEvents();
+        }
+        cursor.close();
+
+        compactCalendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
+            @Override
+            public void onDayClick(Date dateClicked) {
+                selectedDate(dateClicked, date);
+            }
+
+            @Override
+            public void onMonthScroll(Date firstDayOfNewMonth) {
+                currentDate = firstDayOfNewMonth;
+                selectedDate(firstDayOfNewMonth, date);
+
+
+            }
+        });
     }
 
     public void getDates(){
@@ -138,23 +157,23 @@ public class PresenceFragment extends Fragment {
             dates.add(cursor.getString(cursor.getColumnIndex(Presence.COLUMN_DateTime)));
             type = cursor.getInt(cursor.getColumnIndex(Presence.COLUMN_Presence));
             if (type == PRESENT){
-                colors.add(Color.GREEN);
+                colors.add(ContextCompat.getColor(getContext(),R.color.circlePresent));
             }
             else if (type == SIGNED){
-                colors.add(Color.BLUE);
+                colors.add(ContextCompat.getColor(getContext(),R.color.circleSigned));
 
             }
             else if (type == ABSENT){
-                colors.add(Color.YELLOW);
+                colors.add(ContextCompat.getColor(getContext(),R.color.circleAbsent));
 
             }
             else if (type == UNSIGNED){
-                colors.add(Color.RED);
-
+                colors.add(ContextCompat.getColor(getContext(),R.color.circleUnsigned));
             }
 
 
         }while(cursor.moveToNext());
+        cursor.close();
 
 
     }
@@ -173,8 +192,6 @@ public class PresenceFragment extends Fragment {
     }
 
 
-
-
     public void selectedDate(Date date, TextView textView){
         day = (String) android.text.format.DateFormat.format("dd",date);
         month = (String) android.text.format.DateFormat.format("MM", date);
@@ -182,6 +199,19 @@ public class PresenceFragment extends Fragment {
         textView.setText(day+"."+month+"."+year+".");
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("Current Date", currentDate);
+    }
 
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
 
+        if(savedInstanceState!=null){
+            currentDate =  (Date) savedInstanceState.getSerializable("Current Date");
+        }
+
+    }
 }

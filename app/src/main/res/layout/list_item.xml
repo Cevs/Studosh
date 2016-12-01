@@ -5,37 +5,67 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <FrameLayout
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/expandableItem">
+        android:layout_height="match_parent"
+        android:background="@drawable/drawer_list_selector"
+        android:layout_gravity="center_vertical">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/drawer_list_selector">
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:layout_weight="0.5"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            app:srcCompat="@drawable/notebook"
+            android:id="@+id/courseImageList" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:layout_marginLeft="72dp"
-                android:layout_marginTop="10dp"
-                android:fontFamily="sans-serif-medium"
-                android:text="Medium Text"
-                android:textColor="@color/black"
-                android:id="@+id/expandable_list_item" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="35dp"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center_vertical"
+            android:fontFamily="sans-serif-medium"
+            android:text="Medium Text"
+            android:textColor="@color/black"
+            android:id="@+id/expandable_list_item" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="3.5dp"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="center_vertical">
+
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="0.5"
+                android:layout_marginLeft="5dp"
+                app:srcCompat="@drawable/ic_renamecourse"
+                android:id="@+id/imageButton_renamecourse"
+                android:background="@drawable/item_button_selector_navigationdrawer"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/imageButton_deletecourse" />
+
+            <ImageButton
+                android:layout_marginLeft="10dp"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="0.5"
+                app:srcCompat="@drawable/ic_deletecoruse"
+                android:id="@+id/imageButton_deletecourse"
+                android:background="@drawable/item_button_selector_navigationdrawer"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true" />
+
+        </LinearLayout>
 
 
-            <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="16dp"
-                app:srcCompat="@drawable/notebook"
-                android:id="@+id/courseImageList" />
+    </LinearLayout>
 
-
-        </RelativeLayout>
-    </FrameLayout>
 
 </LinearLayout>

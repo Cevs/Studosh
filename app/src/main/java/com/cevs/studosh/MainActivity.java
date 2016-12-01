@@ -5,23 +5,15 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.view.ContextMenu;
 import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.cevs.studosh.Dialogs.DialogHelper;
@@ -48,13 +40,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+
 
 public class MainActivity extends AppCompatActivity {
 
     android.support.v4.app.FragmentManager supportFragmentManager;
     FragmentManager fragmentManager;
     CourseRepo courseRepo;
+    SemesterRepo semesterRepo;
     String[] menuItems;
     Cursor cursor;
 
@@ -70,8 +63,8 @@ public class MainActivity extends AppCompatActivity {
 
     ArrayList<Long> arrayOfIds;
 
-    ImageView mainItemIcon, subItemIcon1, subItemIcon2, subItemIcon3, subItemIcon4, subItemIcon5;
-    SubActionButton  subButton1, subButton2, subButton3, subButton4, subButton5;
+    ImageView mainItemIcon, subItemIcon1, subItemIcon2, subItemIcon3, subItemIcon4, subItemIcon5, subItemIcon6;
+    SubActionButton  subButton1, subButton2, subButton3, subButton4, subButton5,subButton6;
     FloatingActionMenu actionMenu;
 
     long courseId;
@@ -95,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         DBHelper dbHelper = new DBHelper(this);
         DataBaseManager.initializeInstance(dbHelper);
 
-        final SemesterRepo semesterRepo = new SemesterRepo();
+        semesterRepo = new SemesterRepo();
 
         fragmentManager = getFragmentManager();
         supportFragmentManager = getSupportFragmentManager();
@@ -104,13 +97,14 @@ public class MainActivity extends AppCompatActivity {
 
         initUI();
 
-
         mainItemIcon = new ImageView(this);
         subItemIcon1 = new ImageView(this);
         subItemIcon2 = new ImageView(this);
         subItemIcon3 = new ImageView(this);
         subItemIcon4 = new ImageView(this);
         subItemIcon5 = new ImageView(this);
+        subItemIcon6 = new ImageView(this);
+
 
 
         FloatingActionButton fab = new FloatingActionButton.Builder(this).setContentView(mainItemIcon)
@@ -122,26 +116,34 @@ public class MainActivity extends AppCompatActivity {
 
 
         mainItemIcon.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.menu_button));
-        subItemIcon1.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.add_course));
-        subItemIcon2.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.add_criteria));
-        subItemIcon3.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.add_presence));
-        subItemIcon4.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.mark));
-        subItemIcon5.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.cross));
+        subItemIcon1.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.add_semester));
+        subItemIcon2.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.add_course));
+        subItemIcon3.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.add_criteria));
+        subItemIcon4.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.add_presence));
+        subItemIcon5.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.mark));
+        subItemIcon6.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.cross));
 
         subButton1 = itemBuilder.setContentView(subItemIcon1).build();
         subButton2 = itemBuilder.setContentView(subItemIcon2).build();
         subButton3 = itemBuilder.setContentView(subItemIcon3).build();
         subButton4 = itemBuilder.setContentView(subItemIcon4).build();
         subButton5 = itemBuilder.setContentView(subItemIcon5).build();
+        subButton6 = itemBuilder.setContentView(subItemIcon6).build();
 
 
-        actionMenu = new FloatingActionMenu.Builder(this).addSubActionView(subButton1)
-                .addSubActionView(subButton2).addSubActionView(subButton3).addSubActionView(subButton4)
-                .addSubActionView(subButton5).attachTo(fab).setRadius(300).setStartAngle(200).setEndAngle(340).build();
+        actionMenu = new FloatingActionMenu.Builder(this).addSubActionView(subButton1).addSubActionView(subButton2)
+                .addSubActionView(subButton3).addSubActionView(subButton4).addSubActionView(subButton5)
+                .addSubActionView(subButton6).attachTo(fab).setRadius(300).setStartAngle(200).setEndAngle(340).build();
 
         //Sadly, this must be implemented this way because the developers of this library
         //didn't create a way to find out or to set id to a buttons
         subButton1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDialogHelper.setSemesterDialog();
+            }
+        });
+        subButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -154,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        subButton2.setOnClickListener(new View.OnClickListener() {
+        subButton3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -169,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        subButton3.setOnClickListener(new View.OnClickListener() {
+        subButton4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -184,14 +186,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        subButton4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mViewPager.setCurrentItem(2);
-                actionMenu.close(true);
-            }
-        });
-
         subButton5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -200,6 +194,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        subButton6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mViewPager.setCurrentItem(2);
+                actionMenu.close(true);
+            }
+        });
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -207,21 +208,6 @@ public class MainActivity extends AppCompatActivity {
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        ImageButton addNewSemester = (ImageButton) findViewById(R.id.button_add);
-        addNewSemester.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mDialogHelper.setSemesterDialog();
-            }
-        });
-
-        ImageButton deleteSemesters = (ImageButton) findViewById(R.id.button_delete);
-        deleteSemesters.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               mDialogHelper.setDeleteDialog();
-            }
-        });
 
         createExpandableList();
     }
@@ -287,7 +273,8 @@ public class MainActivity extends AppCompatActivity {
     public void populateList(){
 
         expandableListView = (ExpandableListView) findViewById(R.id.expandable_list);
-        expandableListView.setIndicatorBounds(700,0);
+        //Set position of indicator arrow
+        expandableListView.setIndicatorBounds(5,0);
 
         Collections.sort(listDataHeader);
         expandableListAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
@@ -306,8 +293,6 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-        registerForContextMenu(expandableListView);
     }
 
     //Called only in first accessing the application
@@ -320,8 +305,7 @@ public class MainActivity extends AppCompatActivity {
         List<ChildPair> children;
         long foreignKey;
 
-        SemesterRepo semesterRepo = new SemesterRepo();
-        CourseRepo courseRepo = new CourseRepo();
+        semesterRepo = new SemesterRepo();
         Cursor semesterCursor = semesterRepo.getAllRows();
         Cursor courseCursor;
 
@@ -361,7 +345,6 @@ public class MainActivity extends AppCompatActivity {
         }
         populateList();
     }
-
 
     //Inserting new element in navigationDrawerSemesterList
     //Expandable list
@@ -403,12 +386,18 @@ public class MainActivity extends AppCompatActivity {
 
         listDataHeader.add(nSemester);
         listDataChild.put(nSemester,new ArrayList<ChildPair>());
-        //Tu komparator
         sortAscendingHeader(listDataHeader);
         expandableListAdapter.newData(listDataHeader,listDataChild);
         expandableListView.setAdapter(expandableListAdapter);
         expandableListAdapter.notifyDataSetChanged();
 
+    }
+
+    public void deleteSemester(String semesterName){
+        semesterRepo = new SemesterRepo();
+        semesterRepo.deleteRow(semesterName);
+        createExpandableList();
+        setInitialFragments();
     }
 
     //Updating only the specific header with changes after the deletion of course
@@ -417,8 +406,7 @@ public class MainActivity extends AppCompatActivity {
         int k = 0;
         ArrayList<ChildPair> children = new ArrayList<ChildPair>();
 
-        CourseRepo courseRepo = new CourseRepo();
-        Cursor cursor = courseRepo.getRows(foreignKey);
+        cursor = courseRepo.getRows(foreignKey);
 
         int size = cursor.getCount();
 
@@ -441,14 +429,16 @@ public class MainActivity extends AppCompatActivity {
         }
         else{
             listDataChild.put(listDataHeader.get(groupPosition), new ArrayList<ChildPair>());
+            cursor.close();
         }
-
 
         expandableListAdapter.newData(listDataHeader,listDataChild);
         expandableListView.setAdapter(expandableListAdapter);
         expandableListAdapter.notifyDataSetChanged();
+        expandableListView.expandGroup(groupPosition);
 
         int childSize = expandableListAdapter.getChildrenCount(groupPosition);
+
         if(childSize>0){
 
             setFragments(getItemId(groupPosition,deletedChildPosition));
@@ -457,7 +447,11 @@ public class MainActivity extends AppCompatActivity {
             setInitialFragments();
     }
 
+    public void updateCourse(String courseName, long id){
+        UpdateCourseDialog mUpdateCourseDialog = UpdateCourseDialog.newInstance(courseName,id);
+        mUpdateCourseDialog.show(getSupportFragmentManager(),"Update course");
 
+    }
 
     @Override
     public void onBackPressed() {
@@ -468,85 +462,6 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
-
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu,v,menuInfo);
-
-        ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
-
-        int type = ExpandableListView.getPackedPositionType(info.packedPosition);
-        int groupPosition = ExpandableListView.getPackedPositionGroup(info.packedPosition);
-        int childPosition = ExpandableListView.getPackedPositionChild(info.packedPosition);
-
-        if(type == ExpandableListView.PACKED_POSITION_TYPE_CHILD){
-            ChildPair object =  (ChildPair) expandableListAdapter.getChild(groupPosition,childPosition);
-            String title = object.getName();
-
-
-            final int DELETE_COURSE = 0;
-            final int UPDATE_COURSE = 1;
-
-            menuItems = new String[]{};
-            menu.setHeaderTitle(title);
-
-            menuItems = getResources().getStringArray(R.array.menuItems);
-            menu.add(0,DELETE_COURSE,0,menuItems[0]);
-            menu.add(0,UPDATE_COURSE,0,menuItems[1]);
-
-
-        }
-    }
-    @Override
-    public boolean onContextItemSelected(MenuItem menuItem) {
-
-        if(menuItem.getGroupId()==0)
-        {
-            ExpandableListView.ExpandableListContextMenuInfo info =
-                    (ExpandableListView.ExpandableListContextMenuInfo) menuItem.getMenuInfo();
-
-            int groupPosition = 0;
-            int childPosition = 0;
-
-            int type = ExpandableListView.getPackedPositionType(info.packedPosition);
-            if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD){
-                groupPosition = ExpandableListView.getPackedPositionGroup(info.packedPosition);
-                childPosition = ExpandableListView.getPackedPositionChild(info.packedPosition);
-            }
-
-            ChildPair object = (ChildPair) expandableListAdapter.getChild(groupPosition,childPosition);
-            String course = object.getName();
-            long id = object.getRowId();
-
-            int iid = menuItem.getItemId();
-            switch (iid){
-                case 0:{
-                    courseRepo = new CourseRepo();
-                    Cursor cursor  = courseRepo.getRow(id);
-                    courseRepo.deleteRow(id);
-                    long foreignKey = cursor.getLong(cursor.getColumnIndex(Course.COLUMN_SemesterId));
-                    deleteItem(groupPosition, childPosition, foreignKey);
-                    expandableListView.expandGroup(groupPosition);
-                    Toast.makeText(getBaseContext(),"DELETE "+course,Toast.LENGTH_SHORT).show();
-                    break;
-                }
-
-                case 1:{
-                    expandableListView.expandGroup(groupPosition);
-                    UpdateCourseDialog mUpdateCourseDialog = UpdateCourseDialog.newInstance(course,id);
-                    mUpdateCourseDialog.show(getSupportFragmentManager(),"Update course");
-                    Toast.makeText(getBaseContext(),course + " Updated", Toast.LENGTH_SHORT).show();
-                    break;
-                }
-                default:
-                    return super.onContextItemSelected(menuItem);
-            }
-        }
-
-        return true;
-    }
-
 
     //method that returns rowId of next child in list
     //if delete item at position >1 return deletedPosition +1
@@ -568,36 +483,8 @@ public class MainActivity extends AppCompatActivity {
 
             return object.getRowId();
         }
-
     }
 
-    //Function returnItemId takes care of proper indexing course entries
-    //When deleting courses from database this function returns id of  previously inserted entry
-    public long returnItemId(long id){
-        arrayOfIds = new ArrayList<Long>(){};
-        cursor = courseRepo.getAllRows();
-        cursor.moveToFirst();
-        //Make array list of ids that are written in database
-        do{
-            arrayOfIds.add(cursor.getLong(cursor.getColumnIndex(Course.COLUMN_CourseId)));
-        }while(cursor.moveToNext());
-        cursor.close();
-
-        //Get the index of specific id in array list
-        //And delete it from array
-        long index = arrayOfIds.indexOf(id);
-        arrayOfIds.remove(id);
-
-        if(cursor.getCount() > 1 && index != 0){
-            return  arrayOfIds.get((int)index-1);
-        }
-        else if(cursor.getCount()> 1 && index == 0){
-            return  arrayOfIds.get((int)index);
-        }
-        else
-            return -1;
-
-    }
 
     public void sortAscendingHeader(List<String> headers){
         Collections.sort(headers, new Comparator<String>() {
@@ -625,10 +512,7 @@ public class MainActivity extends AppCompatActivity {
                     return -1;
 
                 return pair1.getName().compareToIgnoreCase(pair2.getName());
-
             }
         });
     }
-
-
 }

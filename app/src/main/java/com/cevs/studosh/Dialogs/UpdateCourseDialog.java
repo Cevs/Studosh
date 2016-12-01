@@ -105,6 +105,7 @@ public class UpdateCourseDialog extends android.support.v4.app.DialogFragment {
 
                 try{
                     courseRepo.updateRow(rowId, course);
+                    Toast.makeText(getContext(),oldName + " Updated", Toast.LENGTH_SHORT).show();
                 }catch (Exception e){
                     Toast.makeText(getActivity(),e+"",Toast.LENGTH_LONG).show();
                 }
@@ -123,6 +124,7 @@ public class UpdateCourseDialog extends android.support.v4.app.DialogFragment {
             public void onClick(DialogInterface dialogInterface, int i){}
         });
 
+        cursor.close();
         dialog = builder.create();
         return dialog;
     }

@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -61,6 +62,9 @@ public class MyDateDialogPicker extends DialogFragment implements View.OnClickLi
     static final int SIGNED = 3;
     static final int UNSIGNED = 4;
 
+    DialogHelper dialogHelper;
+
+    Toast toast;
 
     public static MyDateDialogPicker newInstance(long foreignKey){
         MyDateDialogPicker dialog = new MyDateDialogPicker();
@@ -88,6 +92,7 @@ public class MyDateDialogPicker extends DialogFragment implements View.OnClickLi
         builder.setView(view);
 
         datePicker = (DatePicker) view.findViewById(R.id.datePicker);
+        dialogHelper  = new DialogHelper();
 
         bPresent = false;
         bSigned = false;
@@ -112,6 +117,7 @@ public class MyDateDialogPicker extends DialogFragment implements View.OnClickLi
         return dialog;
     }
 
+
     public void getDate(){
         day = datePicker.getDayOfMonth();
         month = datePicker.getMonth();
@@ -120,91 +126,92 @@ public class MyDateDialogPicker extends DialogFragment implements View.OnClickLi
     }
 
     public void saveDate(){
-
-
         //because of indexing it returns month-1 so we need to add +1 to get picked month
         month = month+1;
         String sDate = year+"-"+month+"-"+day;
-        long milliSecsDate = milliseconds(sDate);
+        long sDateMilliseconds = milliseconds(sDate);
+        sDate = day+"."+month+"."+year;
 
         presence = new Presence();
         presenceRepo = new PresenceRepo();
 
         if(bPresent){
             //Look in db if there is already record of that date for that course
-            takenDate = searchIfTaken(milliSecsDate);
+            takenDate = searchIfTaken(sDateMilliseconds);
             if (!takenDate){
 
-                presence.setDateTime(milliSecsDate+"");
+                presence.setDateTime(sDateMilliseconds+"");
                 presence.setPresence(PRESENT);
                 presence.setForeignKey(foreignKey);
 
                 if(presenceRepo.insertRow(presence)>0){
-                    Toast.makeText(getActivity(),"Prisustvao: "+sDate,Toast.LENGTH_SHORT).show();
+                    showToast("Prisustvovao: ", sDate);
                 }
             }
-            else
-                Toast.makeText(getActivity(),"Već postoji zapis",Toast.LENGTH_SHORT).show();
+            else {
+                dialogHelper.setRewriteDateDialog();
+            }
 
 
         }
 
         else if(bSigned){
 
-            takenDate = searchIfTaken(milliSecsDate);
+            takenDate = searchIfTaken(sDateMilliseconds);
             if(!takenDate){
-                presence.setDateTime(milliSecsDate+"");
+                presence.setDateTime(sDateMilliseconds+"");
                 presence.setPresence(SIGNED);
                 presence.setForeignKey(foreignKey);
 
                 if(presenceRepo.insertRow(presence)>0){
-                    Toast.makeText(getActivity(),"Potpisan: "+sDate,Toast.LENGTH_SHORT).show();
+                    showToast("Potpisan: ",sDate);
                 }
 
             }
             else{
-                Toast.makeText(getActivity(),"Već postoji zapis",Toast.LENGTH_SHORT).show();
+                dialogHelper.setRewriteDateDialog();
             }
 
         }
         else if(bAbsent){
-            takenDate = searchIfTaken(milliSecsDate);
+            takenDate = searchIfTaken(sDateMilliseconds);
             if (!takenDate){
-                presence.setDateTime(milliSecsDate+"");
+                presence.setDateTime(sDateMilliseconds+"");
                 presence.setPresence(ABSENT);
                 presence.setForeignKey(foreignKey);
 
                 if(presenceRepo.insertRow(presence)>0){
-                    Toast.makeText(getActivity(),"Odsutan: "+sDate, Toast.LENGTH_SHORT).show();
+                    showToast("Odsutan: ",sDate);
                 }
             }
             else{
-                Toast.makeText(getActivity(),"Već postoji zapis",Toast.LENGTH_SHORT).show();
+                dialogHelper.setRewriteDateDialog();
             }
         }
         else if(bUnsigned){
-            takenDate = searchIfTaken(milliSecsDate);
+            takenDate = searchIfTaken(sDateMilliseconds);
             if(!takenDate){
-                presence.setDateTime(milliSecsDate+"");
+                presence.setDateTime(sDateMilliseconds+"");
                 presence.setPresence(UNSIGNED);
                 presence.setForeignKey(foreignKey);
 
                 if(presenceRepo.insertRow(presence)>0){
-                    Toast.makeText(getActivity(),"Propustio potpis: "+sDate,Toast.LENGTH_SHORT).show();
+                    showToast("Propustio potpis: ",sDate);
                 }
             }
             else{
-                Toast.makeText(getActivity(),"Već postoji zapis",Toast.LENGTH_SHORT).show();
+                dialogHelper.setRewriteDateDialog();
             }
         }
         else
-            Toast.makeText(getActivity(),"Cancel",Toast.LENGTH_SHORT).show();
+            showToast("Zatvoreno","");
 
         //refresh viewpager after changing
         ((MainActivity)getActivity()).setFragments(foreignKey);
     }
 
 
+    //Converting date in milliseconds so it could be stored in DB
     public long milliseconds(String date){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try{
@@ -228,6 +235,7 @@ public class MyDateDialogPicker extends DialogFragment implements View.OnClickLi
                 return true;
             cursor.moveToNext();
         }
+        cursor.close();
         return  false;
     }
 
@@ -237,31 +245,51 @@ public class MyDateDialogPicker extends DialogFragment implements View.OnClickLi
         switch (view.getId()){
             case R.id.button_present:{
                 bPresent = true;
+                bSigned = false;
+                bAbsent = false;
+                bUnsigned = false;
                 getDate();
-                dismiss();
+                //dismiss();
             }break;
 
             case R.id.button_signed:{
                 bSigned = true;
+                bPresent = false;
+                bAbsent = false;
+                bUnsigned = false;
                 getDate();
-                dismiss();
+                //dismiss();
             }break;
 
             case R.id.button_absent:{
                 bAbsent = true;
+                bPresent = false;
+                bSigned = false;
+                bUnsigned = false;
                 getDate();
-                dismiss();
+                //dismiss();
             }break;
 
             case R.id.button_unsigned:{
                 bUnsigned = true;
+                bPresent = false;
+                bSigned = false;
+                bAbsent = false;
                 getDate();
-                dismiss();
+                //dismiss();
             }break;
 
             case R.id.imageButton_cancel:{
                 dismiss();
             }break;
         }
+    }
+
+    public void showToast(String text, String date){
+        if(toast!=null)
+            toast.cancel();
+        toast = Toast.makeText(getActivity(),text+date,Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.BOTTOM,0,0);
+        toast.show();
     }
 }

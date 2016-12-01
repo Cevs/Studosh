@@ -6,6 +6,10 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="mainColor">#324A5E</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="circleAbsent">#FFA500</color>
+    <color name="circleUnsigned">#C82020</color>
+    <color name="circlePresent">#66B3FF</color>
+    <color name="circleSigned">#008000</color>
     <color name="transparentColor">#CFFFFFFF</color>
     <color name="frameColor">#90DBDBDB</color>
     <color name="navigationTabStrip">#DDAE36</color>

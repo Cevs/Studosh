@@ -16,8 +16,7 @@ public class SemesterRepo {
     public static String createTable() {
         return "CREATE TABLE " + Semester.TABLE_Name + "("
                 + Semester.COLUMN_SemesterId + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + Semester.COLUMN_SemesterName + " TEXT, "
-                + Semester.COLUMN_SemesterNumber + " TEXT );";
+                + Semester.COLUMN_SemesterName + " TEXT );";
     }
 
     public long insertRow(Semester semester){
@@ -25,15 +24,26 @@ public class SemesterRepo {
         SQLiteDatabase db = DataBaseManager.getInstance().openDatabase();
         ContentValues values = new ContentValues();
         values.put(Semester.COLUMN_SemesterName, semester.getSemesterName());
-        values.put(Semester.COLUMN_SemesterNumber, semester.getSemesterNumber());
         semesterId  = db.insert(Semester.TABLE_Name,null,values);
         DataBaseManager.getInstance().closeDatabase();
         return semesterId;
     }
 
-    public boolean deleteRow(long semesterId){
+    public boolean deleteRow(String semesterName){
         SQLiteDatabase db = DataBaseManager.getInstance().openDatabase();
-        String where = Semester.COLUMN_SemesterId + " = " + semesterId;
+        String where = Semester.COLUMN_SemesterName + " = " + "'"+semesterName+"'";
+        int b = db.delete(Semester.TABLE_Name,where,null);
+        DataBaseManager.getInstance().closeDatabase();
+        if(b!=-1){
+            return true;
+        }
+        return false;
+    }
+
+    // deleteRowById and deleteAllRows will be used when deleting account of user or something
+    public boolean deleteRowById(long id){
+        SQLiteDatabase db = DataBaseManager.getInstance().openDatabase();
+        String where = Semester.COLUMN_SemesterId + " = " + id;
         int b = db.delete(Semester.TABLE_Name,where,null);
         DataBaseManager.getInstance().closeDatabase();
         if(b!=-1){
@@ -47,7 +57,7 @@ public class SemesterRepo {
         long rowId = c.getColumnIndexOrThrow(Semester.COLUMN_SemesterId);
         if (c.moveToFirst()){
             do{
-                deleteRow(c.getLong((int)rowId));
+                deleteRowById(c.getLong((int)rowId));
             }while(c.moveToNext());
         }
         c.close();
@@ -64,9 +74,9 @@ public class SemesterRepo {
         return c;
     }
 
-    public Cursor getRow(long rowId){
+    public Cursor getRow(String semesterName){
         SQLiteDatabase db = DataBaseManager.getInstance().openDatabase();
-        String where = Semester.COLUMN_SemesterId + " = " + rowId;
+        String where = Semester.COLUMN_SemesterName + " = " + "'"+semesterName+"'";
         Cursor c = db.query(true, Semester.TABLE_Name,Semester.ALL_ROWS, where, null,null,null,null,null);
 
         if(c!=null){
@@ -82,7 +92,6 @@ public class SemesterRepo {
         String where = Semester.COLUMN_SemesterId + " = " + rowId;
         ContentValues newValues = new ContentValues();
         newValues.put(Semester.COLUMN_SemesterName, semester.getSemesterName());
-        newValues.put(Semester.COLUMN_SemesterNumber,semester.getSemesterNumber());
 
         if(db.update(Semester.TABLE_Name,newValues, where, null)==-1){
             DataBaseManager.getInstance().closeDatabase();
@@ -94,9 +103,9 @@ public class SemesterRepo {
         }
     }
 
-    public boolean findRow(String semesterNumber){
+    public boolean findRow(String semester){
         SQLiteDatabase db = DataBaseManager.getInstance().openDatabase();
-        String where = Semester.COLUMN_SemesterNumber + " = '" + semesterNumber +"'";
+        String where = Semester.COLUMN_SemesterName + " = '" + semester +"'";
 
         Cursor c  = db.query(true,Semester.TABLE_Name,Semester.ALL_ROWS,where,null,null,null,null,null);
         boolean exist = (c.getCount()>0);

@@ -8,12 +8,10 @@ public class Semester {
     public static final String TABLE_Name = "Semester";
     public static final String COLUMN_SemesterId = "_id";
     public static final String COLUMN_SemesterName = "Name";
-    public static final String COLUMN_SemesterNumber = "Number";
-    public static final String[] ALL_ROWS = {Semester.COLUMN_SemesterId, Semester.COLUMN_SemesterName, Semester.COLUMN_SemesterNumber};
+    public static final String[] ALL_ROWS = {Semester.COLUMN_SemesterId, Semester.COLUMN_SemesterName};
 
     private long id;
     private String name;
-    private String number;
 
     public void setId(long id){
         this.id = id;
@@ -28,14 +26,6 @@ public class Semester {
 
     public String getSemesterName(){
         return name;
-    }
-
-    public void setSemesterNumber(String number){
-        this.number = number;
-    }
-
-    public String getSemesterNumber(){
-        return number;
     }
 
     //This method using ArrayAdapter in class CourseDialog

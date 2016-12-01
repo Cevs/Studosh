@@ -13,8 +13,10 @@ import com.cevs.studosh.MainActivity;
 import com.cevs.studosh.R;
 import com.cevs.studosh.data.model.Content;
 import com.cevs.studosh.data.model.Course;
+import com.cevs.studosh.data.model.Presence;
 import com.cevs.studosh.data.repo.ContentRepo;
 import com.cevs.studosh.data.repo.CourseRepo;
+import com.cevs.studosh.data.repo.PresenceRepo;
 
 /**
  * Created by TOSHIBA on 03.10.2016..
@@ -26,15 +28,21 @@ public class GeneralFragment extends Fragment {
     TextView points;
     TextView maxPoints;
     TextView mark;
+    TextView tvSigned;
     View view;
     private long courseId;
     CourseRepo courseRepo;
     ContentRepo contentRepo;
+    PresenceRepo presenceRepo;
     Cursor cursor;
 
     String grade;
     Double sumOfPoints;
     Double sumOfMaxPoints;
+    int signed;
+
+
+    static final int SIGNED = 3;
 
     public GeneralFragment(){}
 
@@ -56,12 +64,33 @@ public class GeneralFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        view = inflater.inflate(R.layout.fragment_general,container,false);
-        name = (TextView) view.findViewById(R.id.tvFragment_courseName);
-        semester = (TextView) view.findViewById(R.id.tvFragment_semester);
-        points = (TextView) view.findViewById(R.id.generalFragmentPoints);
-        maxPoints = (TextView) view.findViewById(R.id.generalFragmentMaxPoints);
-        mark = (TextView)view.findViewById(R.id.generalFragmentMark);
+
+
+        if(view != null){
+            ViewGroup parent = (ViewGroup) view.getParent();
+            if (parent !=null){
+                parent.removeView(view);
+            }
+        }else {
+            view = inflater.inflate(R.layout.fragment_general,container,false);
+            name = (TextView) view.findViewById(R.id.tvFragment_courseName);
+            semester = (TextView) view.findViewById(R.id.tvFragment_semester);
+            points = (TextView) view.findViewById(R.id.generalFragmentPoints);
+            maxPoints = (TextView) view.findViewById(R.id.generalFragmentMaxPoints);
+            mark = (TextView)view.findViewById(R.id.generalFragmentMark);
+            tvSigned = (TextView)view.findViewById(R.id.textView_signed);
+
+
+
+        }
+
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
 
         courseRepo = new CourseRepo();
         cursor = courseRepo.getRow(courseId);
@@ -72,6 +101,7 @@ public class GeneralFragment extends Fragment {
 
         sumOfPoints = 0.0;
         sumOfMaxPoints = 0.0;
+        signed = 0;
 
         contentRepo = new ContentRepo();
         cursor = contentRepo.getAllRows(courseId);
@@ -85,6 +115,20 @@ public class GeneralFragment extends Fragment {
             }while(cursor.moveToNext());
 
         }
+        cursor.close();
+
+        presenceRepo = new PresenceRepo();
+        cursor = presenceRepo.getAllRows(courseId);
+
+        if(cursor.getCount()>0){
+            cursor.moveToFirst();
+
+            do{
+                if(cursor.getInt(cursor.getColumnIndex(Presence.COLUMN_Presence))==SIGNED)
+                    signed++;
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
 
         grade = determineGrade(sumOfPoints);
 
@@ -92,14 +136,13 @@ public class GeneralFragment extends Fragment {
         maxPoints.setText(sumOfMaxPoints+"");
         mark.setText(grade);
         name.setText(courseName);
-        //semester.setText(courseSemester);
+        //semester.setText(ccourseSemester);
+        tvSigned.setText(signed+"");
 
 
 
-        cursor.close();
-        return view;
+
     }
-
 
     String determineGrade(double points){
 

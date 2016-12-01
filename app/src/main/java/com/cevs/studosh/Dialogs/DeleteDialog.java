@@ -18,6 +18,24 @@ import com.cevs.studosh.data.repo.SemesterRepo;
 
 public class DeleteDialog extends DialogFragment {
 
+    String semester;
+
+    public static DeleteDialog newInstance(String semester){
+        DeleteDialog dialog = new DeleteDialog();
+        Bundle args = new Bundle();
+        args.putString("Semester",semester);
+        dialog.setArguments(args);
+
+        return dialog;
+    }
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getArguments();
+        semester = getArguments().getString("Semester");
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -25,8 +43,8 @@ public class DeleteDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
 
-        builder.setTitle("Obriši podatke");
-        builder.setMessage("Da li ste sigurni da želite obrisati sve podatke?");
+        builder.setTitle("Obriši");
+        builder.setMessage("Da li ste sigurni da želite obrisati "+semester);
 
         builder.setPositiveButton("Da", new DialogInterface.OnClickListener() {
             @Override

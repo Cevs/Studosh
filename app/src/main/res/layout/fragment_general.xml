@@ -111,7 +111,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.1"
-                android:text="Prisustvo:"
+                android:text="Potrebni potpisi:"
                 android:textSize="25sp"
                 android:fontFamily="sans-serif-medium"
                 android:textColor="@color/black"
@@ -141,12 +141,12 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Dolasci:"
+                android:text="Potpisi:"
                 android:layout_weight="1.1"
                 android:textSize="25sp"
                 android:fontFamily="sans-serif-medium"
                 android:textColor="@color/black"
-                android:layout_marginLeft="5dp"/>
+                android:layout_marginLeft="5dp" />
 
             <TextView
                 android:layout_width="0dp"
@@ -159,7 +159,8 @@
                 android:maxLength="13"
                 android:ellipsize="end"
                 android:gravity="center"
-                android:textColor="@color/black"/>
+                android:textColor="@color/black"
+                android:id="@+id/textView_signed"/>
         </LinearLayout>
 
         <LinearLayout

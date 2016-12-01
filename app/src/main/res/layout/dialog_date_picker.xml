@@ -17,20 +17,25 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:id="@+id/firstSet"
-        android:layout_below="@+id/datePicker">
+        android:layout_below="@+id/datePicker"
+        android:layout_marginRight="10dp">
 
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Prisustvovao"
-            android:id = "@+id/button_present"/>
+            android:id="@+id/button_present"
+            android:background="?android:attr/selectableItemBackground"
+            android:drawableRight="@drawable/circlepresent"/>
 
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground"
             android:text="Potpisan"
+            android:drawableRight="@drawable/circlesigned"
             android:id="@+id/button_signed"/>
 
     </LinearLayout>
@@ -39,20 +44,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@+id/firstSet">
+        android:layout_below="@+id/firstSet"
+        android:layout_marginRight="10dp">
 
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground"
             android:text="Odsutan"
+            android:drawableRight="@drawable/circleabsent"
             android:id="@+id/button_absent"/>
 
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground"
             android:text="Nepotisan"
+            android:drawableRight="@drawable/circleunsigned"
             android:id="@+id/button_unsigned"/>
     </LinearLayout>
 

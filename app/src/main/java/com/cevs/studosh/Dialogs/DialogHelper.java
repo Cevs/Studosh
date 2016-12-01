@@ -62,4 +62,9 @@ public class DialogHelper {
         dialog.show(fragmentManager,"DatePickerDialog");
     }
 
+    public void setRewriteDateDialog(){
+        RewriteDateDialog dialog = new RewriteDateDialog();
+        dialog.show(fragmentManager,"RewriteDateDialog");
+    }
+
 }

@@ -67,17 +67,16 @@ public class SemesterDialog extends DialogFragment {
 
 
                 if(bSemester){
-                    sSemester = "semestar " + nSemester;
+                    sSemester = "Semestar " + nSemester;
                     Semester semester = new Semester();
                     SemesterRepo semesterRepo = new SemesterRepo();
 
                     //Checks if row already exists
-                    if(semesterRepo.findRow(nSemester)){
+                    if(semesterRepo.findRow(sSemester)){
                         Toast.makeText(getActivity(),"Vec postoji taj semestar",Toast.LENGTH_SHORT).show();
                     }
                     else{
                         semester.setSemesterName(sSemester);
-                        semester.setSemesterNumber(nSemester);
                         long semesterId = semesterRepo.insertRow(semester);
 
                         if(semesterId!=-1){
