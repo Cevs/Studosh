@@ -118,7 +118,8 @@ public class GeneralFragment extends Fragment {
         cursor.close();
 
         presenceRepo = new PresenceRepo();
-        cursor = presenceRepo.getAllRows(courseId);
+        //Ovo treba popraviti, treba prosljeti cType kako bi znao zbrajat izostanke bla bla bla
+        cursor = presenceRepo.getAllRows(courseId, 0);
 
         if(cursor.getCount()>0){
             cursor.moveToFirst();

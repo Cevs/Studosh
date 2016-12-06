@@ -10,10 +10,15 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CalendarView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cevs.studosh.MainActivity;
 import com.cevs.studosh.R;
 import com.cevs.studosh.data.model.Presence;
 import com.cevs.studosh.data.repo.PresenceRepo;
@@ -24,6 +29,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
+import static android.R.attr.type;
 
 /**
  * Created by TOSHIBA on 03.10.2016..
@@ -50,9 +57,12 @@ public class PresenceFragment extends Fragment {
     static final int UNSIGNED = 4;
 
     CompactCalendarView compactCalendarView;
-    View rootView;
 
     Date currentDate;
+
+    Spinner calendarTypeSpinner;
+
+    int cType;
 
     public static PresenceFragment newInstance(long foreignKey){
         PresenceFragment fragment = new PresenceFragment();
@@ -86,6 +96,7 @@ public class PresenceFragment extends Fragment {
 
                 view = inflater.inflate(R.layout.fragment_presence,container,false);
                 compactCalendarView = (CompactCalendarView) view.findViewById(R.id.compactcalendar_view);
+                calendarTypeSpinner = (Spinner)view.findViewById(R.id.spinnerCalendar);
 
             }catch (InflateException e){
                 Toast.makeText(getContext(),e+"",Toast.LENGTH_LONG).show();
@@ -104,10 +115,38 @@ public class PresenceFragment extends Fragment {
         // 1 - puni krug
         // 2 - Obrub
         // 3 - tocka
+
         compactCalendarView.setEventIndicatorStyle(2);
 
         String[] daysOfTheWeek = getResources().getStringArray(R.array.daysOfWeek);
+        final String[] calendarTypes = getResources().getStringArray(R.array.calendarTypes);
         compactCalendarView.setDayColumnNames(daysOfTheWeek);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),R.layout.spinner_item_layout,R.id.spinnerItem,calendarTypes);
+        adapter.setDropDownViewResource(R.layout.spinner_item_layout);
+        calendarTypeSpinner.setAdapter(adapter);
+
+        calendarTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                cType = i;
+                cursor = presenceRepo.getAllRows(foreignKey, cType);
+                compactCalendarView.removeAllEvents();
+                if (cursor.getCount()>0){
+
+                    getDates();
+                    getEvents();
+                }
+
+                ((MainActivity)getActivity()).setCalendarType(cType);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
         date = (TextView) view.findViewById(R.id.date);
 
         //Novo
@@ -121,7 +160,7 @@ public class PresenceFragment extends Fragment {
         }
 
         presenceRepo = new PresenceRepo();
-        cursor = presenceRepo.getAllRows(foreignKey);
+        cursor = presenceRepo.getAllRows(foreignKey, cType);
 
         if(cursor.getCount()>0){
             getDates();
@@ -147,7 +186,7 @@ public class PresenceFragment extends Fragment {
 
     public void getDates(){
         presenceRepo = new PresenceRepo();
-        cursor = presenceRepo.getAllRows(foreignKey);
+        cursor = presenceRepo.getAllRows(foreignKey, cType);
         dates = new ArrayList<String>();
         colors = new ArrayList<Integer>();
 
@@ -179,8 +218,10 @@ public class PresenceFragment extends Fragment {
     }
 
     public void getEvents(){
+        compactCalendarView.removeAllEvents();
         events = new ArrayList<Event>();
         int m = dates.size();
+        int n = colors.size();
         for(int i = 0; i<dates.size();i++){
             long milliseconds = Long.parseLong(dates.get(i));
             color  = colors.get(i);

@@ -27,7 +27,7 @@ import com.cevs.studosh.data.repo.SemesterRepo;
  * Created by TOSHIBA on 01.10.2016..
  */
 
-public class UpdateCourseDialog extends android.support.v4.app.DialogFragment {
+public class UpdateCourseDialog extends DialogFragment {
     String oldName;
     String newName;
     Long rowId;
@@ -39,6 +39,7 @@ public class UpdateCourseDialog extends android.support.v4.app.DialogFragment {
     EditText editName;
     Spinner spinner;
     int semesterId;
+    Cursor cursor;
 
     public UpdateCourseDialog(){}
 
@@ -71,7 +72,7 @@ public class UpdateCourseDialog extends android.support.v4.app.DialogFragment {
         spinner = (Spinner) view.findViewById(R.id.spinner);
 
         SemesterRepo semesterRepo = new SemesterRepo();
-        Cursor cursor = semesterRepo.getAllRows();
+        cursor = semesterRepo.getAllRows();
 
         String[] semesterNames = new String[]{Semester.COLUMN_SemesterName};
 
@@ -105,7 +106,7 @@ public class UpdateCourseDialog extends android.support.v4.app.DialogFragment {
 
                 try{
                     courseRepo.updateRow(rowId, course);
-                    Toast.makeText(getContext(),oldName + " Updated", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),oldName + " Updated", Toast.LENGTH_SHORT).show();
                 }catch (Exception e){
                     Toast.makeText(getActivity(),e+"",Toast.LENGTH_LONG).show();
                 }
@@ -113,6 +114,7 @@ public class UpdateCourseDialog extends android.support.v4.app.DialogFragment {
                 ((MainActivity)getActivity()).setFragments(rowId);
                 ((MainActivity)getActivity()).createExpandableList();
                 ((MainActivity)getActivity()).populateList();
+                cursor.close();
             }
         });
 
@@ -121,11 +123,13 @@ public class UpdateCourseDialog extends android.support.v4.app.DialogFragment {
 
         builder.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i){}
+            public void onClick(DialogInterface dialogInterface, int i){cursor.close();}
+
         });
 
-        cursor.close();
+
         dialog = builder.create();
         return dialog;
+
     }
 }

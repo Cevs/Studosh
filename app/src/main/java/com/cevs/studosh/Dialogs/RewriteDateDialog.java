@@ -11,11 +11,48 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
+import com.cevs.studosh.MainActivity;
+import com.cevs.studosh.data.model.Presence;
+import com.cevs.studosh.data.repo.PresenceRepo;
+
+import java.io.Serializable;
+
 /**
  * Created by TOSHIBA on 25.11.2016..
  */
 
 public class RewriteDateDialog extends DialogFragment {
+    String lDate;
+    int calendarType;
+    int presenceType;
+    long foreignKey;
+    long takenRowId;
+
+
+
+    public static RewriteDateDialog newInstance(Presence presence, long rowId){
+        RewriteDateDialog dialog = new RewriteDateDialog();
+        Bundle args = new Bundle();
+
+        args.putSerializable("Presence",  presence);
+        args.putLong("Row Id",rowId);
+        dialog.setArguments(args);
+        return dialog;
+
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Presence presence = (Presence) getArguments().getSerializable("Presence");
+        calendarType = presence.getCalendarType();
+        presenceType = presence.getPresenceType();
+        foreignKey = presence.getForeignKey();
+        lDate = presence.getDateTime();
+        takenRowId = getArguments().getLong("Row Id");
+
+        long n = takenRowId;
+    }
 
     @NonNull
     @Override
@@ -29,8 +66,26 @@ public class RewriteDateDialog extends DialogFragment {
         builder.setPositiveButton("Da", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Toast.makeText(getActivity(),"Da",Toast.LENGTH_SHORT).show();
+                Presence presence = new Presence();
+                PresenceRepo presenceRepo = new PresenceRepo();
+
+                presence.setDateTime(lDate+"");
+                presence.setCalendarType(calendarType);
+                presence.setPresenceType(presenceType);
+                presence.setForeignKey(foreignKey);
+
+                try{
+                    if(presenceRepo.updateRow(takenRowId,presence)){
+                        Toast.makeText(getActivity(),"Prijepis obavljen",Toast.LENGTH_SHORT).show();
+
+                    }
+                    else
+                        Toast.makeText(getActivity(),"Neuspjelo",Toast.LENGTH_SHORT).show();
+                }catch(Exception e){
+                    Toast.makeText(getActivity(),e+"",Toast.LENGTH_SHORT).show();
+                }
             }
+
         });
 
         builder.setNegativeButton("Ne", new DialogInterface.OnClickListener() {
@@ -43,8 +98,9 @@ public class RewriteDateDialog extends DialogFragment {
 
 
         Dialog dialog = builder.create();
-
         return dialog;
 
     }
+
+
 }

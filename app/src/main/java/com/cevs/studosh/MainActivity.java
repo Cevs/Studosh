@@ -1,19 +1,26 @@
 package com.cevs.studosh;
 
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.webkit.WebView;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.cevs.studosh.Dialogs.DialogHelper;
@@ -23,8 +30,10 @@ import com.cevs.studosh.InitialFragments.InitialGeneralFragment;
 import com.cevs.studosh.InitialFragments.InitialPresenceFragment;
 import com.cevs.studosh.data.DBHelper;
 import com.cevs.studosh.data.DataBaseManager;
+import com.cevs.studosh.data.model.Content;
 import com.cevs.studosh.data.model.Course;
 import com.cevs.studosh.data.model.Semester;
+import com.cevs.studosh.data.repo.ContentRepo;
 import com.cevs.studosh.data.repo.CourseRepo;
 import com.cevs.studosh.data.repo.SemesterRepo;
 import com.cevs.studosh.fragments.CriteriaFragment;
@@ -42,7 +51,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  {
 
     android.support.v4.app.FragmentManager supportFragmentManager;
     FragmentManager fragmentManager;
@@ -67,12 +76,16 @@ public class MainActivity extends AppCompatActivity {
     SubActionButton  subButton1, subButton2, subButton3, subButton4, subButton5,subButton6;
     FloatingActionMenu actionMenu;
 
-    long courseId;
+    MyCriteriaListAdapter myCriteriaListAdapter;
     ExpandableListAdapter expandableListAdapter;
     ExpandableListView expandableListView;
     List<String> listDataHeader;
     HashMap<String, List<ChildPair>> listDataChild;
     DrawerLayout drawer;
+    long courseId;
+
+    int type;
+
 
 
 
@@ -80,8 +93,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
 
         mDialogHelper = new DialogHelper(getBaseContext(),getFragmentManager());
 
@@ -131,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
         subButton6 = itemBuilder.setContentView(subItemIcon6).build();
 
 
+
         actionMenu = new FloatingActionMenu.Builder(this).addSubActionView(subButton1).addSubActionView(subButton2)
                 .addSubActionView(subButton3).addSubActionView(subButton4).addSubActionView(subButton5)
                 .addSubActionView(subButton6).attachTo(fab).setRadius(300).setStartAngle(200).setEndAngle(340).build();
@@ -149,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if(((semesterRepo.getAllRows()).getCount())>0){
                     mDialogHelper.setCourseDialog();
-                    actionMenu.close(true);
+
                 }
                 else
                     Toast.makeText(getBaseContext(),"Treba unijeti barem jedan semestar", Toast.LENGTH_SHORT).show();
@@ -164,7 +177,6 @@ public class MainActivity extends AppCompatActivity {
                     mDialogHelper = new DialogHelper(getBaseContext(),courseId);
                     mDialogHelper.setContentDialog();
                     mViewPager.setCurrentItem(1);
-                    actionMenu.close(true);
                 }
                 else
                     Toast.makeText(getBaseContext(),"Treba unijeti barem jedan kolegij", Toast.LENGTH_SHORT).show();
@@ -177,9 +189,9 @@ public class MainActivity extends AppCompatActivity {
 
                 if(((courseRepo.getAllRows()).getCount())>0){
                     mDialogHelper = new DialogHelper(getBaseContext(),courseId);
-                    mDialogHelper.setDateDialog();
+                    mDialogHelper.setDateDialog(type);
                     mViewPager.setCurrentItem(2);
-                    actionMenu.close(true);
+
                 }
                 else
                     Toast.makeText(getBaseContext(),"Treba unijeti barem jedan kolegij",Toast.LENGTH_SHORT).show();
@@ -190,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mViewPager.setCurrentItem(2);
-                actionMenu.close(true);
+
             }
         });
 
@@ -198,9 +210,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mViewPager.setCurrentItem(2);
-                actionMenu.close(true);
+
             }
         });
+
+
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -447,9 +464,9 @@ public class MainActivity extends AppCompatActivity {
             setInitialFragments();
     }
 
-    public void updateCourse(String courseName, long id){
-        UpdateCourseDialog mUpdateCourseDialog = UpdateCourseDialog.newInstance(courseName,id);
-        mUpdateCourseDialog.show(getSupportFragmentManager(),"Update course");
+    public void updateCourse(String courseName, long id) {
+        mDialogHelper = new DialogHelper();
+        mDialogHelper.setUpdateCourseDialog(courseName, id);
 
     }
 
@@ -515,4 +532,39 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_login) {
+            Intent intent = new Intent(MainActivity.this,FoiLogIn.class);
+            startActivity(intent);
+            return true;
+        }
+        if (id == R.id.action_clear){
+            Toast.makeText(getApplicationContext(),"Obriši sve", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    //Method that gets called from PresenceFragment class when you changed type of calendar via spinner
+    public void setCalendarType(int type){
+        this.type = type;
+    }
+
 }

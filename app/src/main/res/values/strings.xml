@@ -4,7 +4,8 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Foi Log In</string>
+    <string name="action_clear">Delete all data</string>
 
     <string name="cNo">cNo</string>
     <string name="criteria">criteria</string>
@@ -32,5 +33,19 @@
         <item>Pet</item>
         <item>Sub</item>
         <item>Ned</item>
+    </string-array>
+
+    <string-array name="calendarTypes">
+        <item>Predavanja</item>
+        <item>Labosi</item>
+        <item>Seminari</item>
+        <item>Ostalo</item>
+    </string-array>
+
+    <string-array name="presenceType">
+        <item>Prisutan</item>
+        <item>Potpisan</item>
+        <item>Izostao</item>
+        <item>Propustio potpis</item>
     </string-array>
 </resources>

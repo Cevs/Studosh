@@ -42,12 +42,9 @@ public class AdapterData {
         listView = (ListView)view.findViewById(R.id.list_criteria);
         items = getData();
         myCriteriaListAdapter = new MyCriteriaListAdapter(items,context);
-        listView.setAdapter(myCriteriaListAdapter);
         myCriteriaListAdapter.notifyDataSetChanged();
         listView.setAdapter(myCriteriaListAdapter);
-
     }
-
     private ArrayList<Content> getData(){
         items = new ArrayList<Content>();
         contentRepo = new ContentRepo();

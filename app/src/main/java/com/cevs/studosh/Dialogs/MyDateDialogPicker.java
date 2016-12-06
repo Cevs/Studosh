@@ -65,11 +65,14 @@ public class MyDateDialogPicker extends DialogFragment implements View.OnClickLi
     DialogHelper dialogHelper;
 
     Toast toast;
+    int cType;
+    long takenRowId;
 
-    public static MyDateDialogPicker newInstance(long foreignKey){
+    public static MyDateDialogPicker newInstance(long foreignKey, int type){
         MyDateDialogPicker dialog = new MyDateDialogPicker();
         Bundle args = new Bundle();
         args.putLong("Foreign Key",foreignKey);
+        args.putInt("Calendar Type",type);
         dialog.setArguments(args);
         return dialog;
     }
@@ -80,6 +83,8 @@ public class MyDateDialogPicker extends DialogFragment implements View.OnClickLi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         foreignKey = getArguments().getLong("Foreign Key");
+        cType = getArguments().getInt("Calendar Type");
+
     }
 
 
@@ -118,101 +123,46 @@ public class MyDateDialogPicker extends DialogFragment implements View.OnClickLi
     }
 
 
-    public void getDate(){
+    private void getDate(){
         day = datePicker.getDayOfMonth();
         month = datePicker.getMonth();
         year = datePicker.getYear();
         saveDate();
     }
 
-    public void saveDate(){
+    private void saveDate(){
         //because of indexing it returns month-1 so we need to add +1 to get picked month
         month = month+1;
         String sDate = year+"-"+month+"-"+day;
-        long sDateMilliseconds = milliseconds(sDate);
+        long lDateMilliseconds = milliseconds(sDate);
         sDate = day+"."+month+"."+year;
 
         presence = new Presence();
         presenceRepo = new PresenceRepo();
-
+        String[] typeOfPresence = getResources().getStringArray(R.array.presenceType);
         if(bPresent){
-            //Look in db if there is already record of that date for that course
-            takenDate = searchIfTaken(sDateMilliseconds);
-            if (!takenDate){
-
-                presence.setDateTime(sDateMilliseconds+"");
-                presence.setPresence(PRESENT);
-                presence.setForeignKey(foreignKey);
-
-                if(presenceRepo.insertRow(presence)>0){
-                    showToast("Prisustvovao: ", sDate);
-                }
-            }
-            else {
-                dialogHelper.setRewriteDateDialog();
-            }
-
-
+            insertInDb(lDateMilliseconds,PRESENT,cType,foreignKey, sDate,typeOfPresence[0]);
         }
 
         else if(bSigned){
-
-            takenDate = searchIfTaken(sDateMilliseconds);
-            if(!takenDate){
-                presence.setDateTime(sDateMilliseconds+"");
-                presence.setPresence(SIGNED);
-                presence.setForeignKey(foreignKey);
-
-                if(presenceRepo.insertRow(presence)>0){
-                    showToast("Potpisan: ",sDate);
-                }
-
-            }
-            else{
-                dialogHelper.setRewriteDateDialog();
-            }
-
+            insertInDb(lDateMilliseconds,SIGNED,cType,foreignKey,sDate, typeOfPresence[1]);
         }
         else if(bAbsent){
-            takenDate = searchIfTaken(sDateMilliseconds);
-            if (!takenDate){
-                presence.setDateTime(sDateMilliseconds+"");
-                presence.setPresence(ABSENT);
-                presence.setForeignKey(foreignKey);
-
-                if(presenceRepo.insertRow(presence)>0){
-                    showToast("Odsutan: ",sDate);
-                }
-            }
-            else{
-                dialogHelper.setRewriteDateDialog();
-            }
+            insertInDb(lDateMilliseconds,ABSENT,cType,foreignKey,sDate,typeOfPresence[2]);
         }
         else if(bUnsigned){
-            takenDate = searchIfTaken(sDateMilliseconds);
-            if(!takenDate){
-                presence.setDateTime(sDateMilliseconds+"");
-                presence.setPresence(UNSIGNED);
-                presence.setForeignKey(foreignKey);
-
-                if(presenceRepo.insertRow(presence)>0){
-                    showToast("Propustio potpis: ",sDate);
-                }
-            }
-            else{
-                dialogHelper.setRewriteDateDialog();
-            }
+            insertInDb(lDateMilliseconds,UNSIGNED,cType,foreignKey, sDate, typeOfPresence[3]);
         }
         else
             showToast("Zatvoreno","");
 
         //refresh viewpager after changing
-        ((MainActivity)getActivity()).setFragments(foreignKey);
+        //((MainActivity)getActivity()).setFragments(foreignKey);
     }
 
 
     //Converting date in milliseconds so it could be stored in DB
-    public long milliseconds(String date){
+    private long milliseconds(String date){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try{
             Date mDate = sdf.parse(date);
@@ -226,13 +176,16 @@ public class MyDateDialogPicker extends DialogFragment implements View.OnClickLi
     }
 
 
-    public boolean searchIfTaken(long time){
-        cursor = presenceRepo.getAllRows(foreignKey);
+    private boolean searchIfTaken(long time){
+        cursor = presenceRepo.getAllRows(foreignKey, cType);
 
         while(!cursor.isAfterLast() && cursor.getCount()>0){
             long milliseconds = Long.parseLong(cursor.getString(cursor.getColumnIndex(Presence.COLUMN_DateTime)));
-            if (milliseconds == time)
+            if (milliseconds == time){
+                takenRowId = cursor.getInt(cursor.getColumnIndex(Presence.COLUMN_PresenceId));
                 return true;
+            }
+
             cursor.moveToNext();
         }
         cursor.close();
@@ -249,7 +202,7 @@ public class MyDateDialogPicker extends DialogFragment implements View.OnClickLi
                 bAbsent = false;
                 bUnsigned = false;
                 getDate();
-                //dismiss();
+
             }break;
 
             case R.id.button_signed:{
@@ -258,7 +211,7 @@ public class MyDateDialogPicker extends DialogFragment implements View.OnClickLi
                 bAbsent = false;
                 bUnsigned = false;
                 getDate();
-                //dismiss();
+
             }break;
 
             case R.id.button_absent:{
@@ -267,7 +220,7 @@ public class MyDateDialogPicker extends DialogFragment implements View.OnClickLi
                 bSigned = false;
                 bUnsigned = false;
                 getDate();
-                //dismiss();
+
             }break;
 
             case R.id.button_unsigned:{
@@ -276,20 +229,48 @@ public class MyDateDialogPicker extends DialogFragment implements View.OnClickLi
                 bSigned = false;
                 bAbsent = false;
                 getDate();
-                //dismiss();
             }break;
 
             case R.id.imageButton_cancel:{
+                ((MainActivity)getActivity()).setFragments(foreignKey);
                 dismiss();
+
             }break;
         }
     }
 
-    public void showToast(String text, String date){
+    private void showToast(String text, String date){
         if(toast!=null)
             toast.cancel();
         toast = Toast.makeText(getActivity(),text+date,Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.BOTTOM,0,0);
         toast.show();
     }
+
+    private void insertInDb(long lTime, int present, int cType, long foreignKey, String sDate, String message) {
+
+        //Look in db if there is already record of that date for that course
+        takenDate = searchIfTaken(lTime);
+        if(!takenDate){
+            presence.setDateTime(lTime+"");
+            presence.setPresenceType(present);
+            presence.setCalendarType(cType);
+            presence.setForeignKey(foreignKey);
+
+            if(presenceRepo.insertRow(presence)>0){
+                showToast(message+": ",sDate);
+            }
+        }
+        else{
+            presence.setDateTime(lTime+"");
+            presence.setPresenceType(present);
+            presence.setCalendarType(cType);
+            presence.setForeignKey(foreignKey);
+            dialogHelper.setRewriteDateDialog(presence,takenRowId);
+
+        }
+
+    }
+
+
 }

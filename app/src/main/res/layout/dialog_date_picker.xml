@@ -41,6 +41,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/secondSet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -61,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="?android:attr/selectableItemBackground"
-            android:text="Nepotisan"
+            android:text="Nepotpisan"
             android:drawableRight="@drawable/circleunsigned"
             android:id="@+id/button_unsigned"/>
     </LinearLayout>
@@ -76,6 +77,5 @@
         android:layout_marginEnd="0dp"
         android:layout_marginTop="0dp"
         android:id="@+id/imageButton_cancel" />
-
-
+    
 </RelativeLayout>

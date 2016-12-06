@@ -5,6 +5,8 @@ import android.content.Context;
 
 import com.cevs.studosh.Dialogs.ContentDialog;
 import com.cevs.studosh.Dialogs.CourseDialog;
+import com.cevs.studosh.MainActivity;
+import com.cevs.studosh.data.model.Presence;
 
 /**
  * Created by TOSHIBA on 28.09.2016..
@@ -56,15 +58,20 @@ public class DialogHelper {
         dialog.show(fragmentManager,"DeleteDialog");
     }
 
-    public void setDateDialog(){
-        //DateDialog dialog = DateDialog.newInstance(courseId);
-        MyDateDialogPicker dialog = MyDateDialogPicker.newInstance(courseId);
+    public void setDateDialog(int type){
+        MyDateDialogPicker dialog = MyDateDialogPicker.newInstance(courseId, type);
         dialog.show(fragmentManager,"DatePickerDialog");
     }
 
-    public void setRewriteDateDialog(){
-        RewriteDateDialog dialog = new RewriteDateDialog();
+    public void setRewriteDateDialog(Presence presence, long takenRowId){
+        RewriteDateDialog dialog = RewriteDateDialog.newInstance(presence, takenRowId);
         dialog.show(fragmentManager,"RewriteDateDialog");
+
+    }
+
+    public void setUpdateCourseDialog(String courseName, long id){
+        UpdateCourseDialog mUpdateCourseDialog = UpdateCourseDialog.newInstance(courseName,id);
+        mUpdateCourseDialog.show(fragmentManager ,"Update course");
     }
 
 }

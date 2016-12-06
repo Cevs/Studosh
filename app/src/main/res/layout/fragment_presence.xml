@@ -5,11 +5,21 @@
     android:layout_height="match_parent"
     android:background="@color/frameColor">
 
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinnerCalendar"
+        android:layout_marginTop="100dp"
+        android:theme="@android:style/Theme.Holo.Light.DarkActionBar"
+        android:spinnerMode="dropdown">
+
+    </Spinner>
+
 
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp">
+        android:layout_marginTop="140dp">
 
         <TextView
             android:background="@drawable/button_selector"
