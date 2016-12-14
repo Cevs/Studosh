@@ -1,13 +1,21 @@
 package com.cevs.studosh;
 
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +24,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
@@ -23,6 +33,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.cevs.studosh.Dialogs.DialogHelper;
 import com.cevs.studosh.Dialogs.UpdateCourseDialog;
 import com.cevs.studosh.InitialFragments.InitialCriteriaFragment;
@@ -32,6 +49,7 @@ import com.cevs.studosh.data.DBHelper;
 import com.cevs.studosh.data.DataBaseManager;
 import com.cevs.studosh.data.model.Content;
 import com.cevs.studosh.data.model.Course;
+import com.cevs.studosh.data.model.Presence;
 import com.cevs.studosh.data.model.Semester;
 import com.cevs.studosh.data.repo.ContentRepo;
 import com.cevs.studosh.data.repo.CourseRepo;
@@ -44,11 +62,19 @@ import com.gigamole.navigationtabstrip.NavigationTabStrip;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
 import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+
+import static android.webkit.ConsoleMessage.MessageLevel.LOG;
 
 
 public class MainActivity extends AppCompatActivity  {
@@ -57,8 +83,9 @@ public class MainActivity extends AppCompatActivity  {
     FragmentManager fragmentManager;
     CourseRepo courseRepo;
     SemesterRepo semesterRepo;
-    String[] menuItems;
+    Semester semester;
     Cursor cursor;
+
 
     MyPagerAdapter mPagerAdapter;
     GeneralFragment generalFragment;
@@ -83,10 +110,10 @@ public class MainActivity extends AppCompatActivity  {
     HashMap<String, List<ChildPair>> listDataChild;
     DrawerLayout drawer;
     long courseId;
-
+    Course course;
     int type;
 
-
+    final static int LOG_IN = 1;
 
 
     @Override
@@ -455,6 +482,7 @@ public class MainActivity extends AppCompatActivity  {
         expandableListView.expandGroup(groupPosition);
 
         int childSize = expandableListAdapter.getChildrenCount(groupPosition);
+        sortAscendingChildren(children);
 
         if(childSize>0){
 
@@ -550,8 +578,40 @@ public class MainActivity extends AppCompatActivity  {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_login) {
-            Intent intent = new Intent(MainActivity.this,FoiLogIn.class);
-            startActivity(intent);
+            clearCookies(getBaseContext());
+            boolean mobileDataEnabled = false;
+
+            ConnectivityManager cm = (ConnectivityManager) getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            try{
+                WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+                Class cmClass = Class.forName(cm.getClass().getName());
+                Method method = cmClass.getDeclaredMethod("getMobileDataEnabled");
+                method.setAccessible(true); //make the method callable
+                //get the setting for "mobile data"
+                mobileDataEnabled = (Boolean) method.invoke(cm);
+
+                //If mobile data and wifi is turned off, turn it on
+                if (!mobileDataEnabled && !wifi.isWifiEnabled()){
+                    /*Intent intent = new Intent(Intent.ACTION_MAIN);
+                    intent.setClassName("com.android.phone","com.android.phone.NetworkSetting");
+                    startActivity(intent);*/
+
+                    Intent settingsIntent = new Intent(Settings.ACTION_SETTINGS);
+                    startActivityForResult(settingsIntent, 9003);
+
+                }
+
+                else{
+                    Intent intent = new Intent(MainActivity.this,FoiLogIn.class);
+                    startActivityForResult(intent,LOG_IN);
+                }
+
+
+            }catch (Exception e){
+                Log.d("Mobile data",e.toString());
+            }
+
+
             return true;
         }
         if (id == R.id.action_clear){
@@ -566,5 +626,131 @@ public class MainActivity extends AppCompatActivity  {
     public void setCalendarType(int type){
         this.type = type;
     }
+
+    //Deleting all cookies stored in app so we get that user every time needs to log in if he wants to fetch data (courses)
+    @SuppressWarnings("deprecation")
+    public static void clearCookies(Context context) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+
+            CookieManager.getInstance().removeAllCookies(null);
+            CookieManager.getInstance().flush();
+        } else {
+
+            CookieSyncManager cookieSyncMngr = CookieSyncManager.createInstance(context);
+            cookieSyncMngr.startSync();
+            CookieManager cookieManager = CookieManager.getInstance();
+            cookieManager.removeAllCookie();
+            cookieManager.removeSessionCookie();
+            cookieSyncMngr.stopSync();
+            cookieSyncMngr.sync();
+        }
+    }
+
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == LOG_IN && resultCode == RESULT_OK){
+            String sessionId = data.getExtras().getString("SESSIONID");
+            Log.d("URL",sessionId);
+            downloadData(sessionId);
+        }
+
+
+    }
+
+    //download data from server
+    public void downloadData(String id){
+
+        //Stvoriti arraylista courseva i onda provjerit da li postoje, ako postoje pokrenit dailog koji pita da li zelimo prepisa
+        //ako zelimo, prepisemo ako ne nista  ne radimo
+        //U slucaju da postoje samo ih upisemo
+        ArrayList<Course> courseNames = new ArrayList<Course>();
+        String url = "http://nastava-api.azurewebsites.net/api/Subjects/Actual/"+id;
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        final ProgressDialog progressDialog = ProgressDialog.show(this,"Fetching data","Please wait...",true);
+        progressDialog.show();
+        JsonArrayRequest myRequest = new JsonArrayRequest(Request.Method.GET,url,new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+
+                Log.d("VOLLEY",response.toString());
+                courseRepo = new CourseRepo();
+                semesterRepo = new SemesterRepo();
+                course = new Course();
+                for(int i = 0; i<response.length(); i++){
+                    try {
+                        JSONObject object = response.getJSONObject(i);
+                        String courseName = object.getString("Name");
+                        int semesterNumber = object.getInt("Semester");
+                        int ects = object.getInt("Ects");
+
+                        course = new Course();
+                        semester = new Semester();
+
+                        String semesterName = "Semester "+semesterNumber;
+                        Boolean exists = semesterRepo.findRow(semesterName);
+                        if(!exists){
+                            semester.setSemesterName(semesterName);
+                            semesterRepo.insertRow(semester);
+                        }
+
+
+                        Log.d("VOLLEY", courseName);
+                        Log.d("VOLLEY",semesterName);
+                        Log.d("VOLLEY",ects+"");
+
+                        exists = courseRepo.findRow(courseName);
+                        if(!exists){
+
+
+                            cursor = semesterRepo.getRow(semesterName);
+                            course.setSemesterId(cursor.getLong(cursor.getColumnIndex(Semester.COLUMN_SemesterId)));
+                            course.setCourseName(courseName);
+                            course.setCourseECTS(ects);
+
+                            courseRepo.insertRow(course);
+                            cursor.close();
+
+                        }
+                        else{
+                            Log.d("VOLLEY","Već postoji");
+                        }
+
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                createExpandableList();
+                progressDialog.dismiss();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("VOLLEY", error.toString());
+            }
+        });
+
+        /*Retry attempt 1:
+        time = time + (time * Back Off Multiplier)
+        time = 15000 + 15000 = 30000 ms
+         */
+        int socketTimeout = 15000;
+        myRequest.setRetryPolicy(new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        Log.d("Socket",myRequest.getRetryPolicy().getCurrentRetryCount()+"");
+        Log.d("Socket",myRequest.getRetryPolicy().getCurrentTimeout()+"");
+        myRequest.getRetryPolicy();
+        queue.add(myRequest);
+
+    }
+
 
 }

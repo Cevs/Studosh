@@ -19,7 +19,8 @@
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="140dp">
+        android:layout_marginTop="140dp"
+        android:id="@+id/frameLayout">
 
         <TextView
             android:background="@drawable/button_selector"
@@ -48,6 +49,14 @@
             app:compactCalendarCurrentDayBackgroundColor="@color/navigationTabStrip"
             app:compactCalendarMultiEventIndicatorColor="#000000"/>
     </FrameLayout>
+
+    <Button
+        android:text="Potpisi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/frameLayout"
+        android:layout_alignParentStart="true"
+        android:id="@+id/buttonPresenceInfo" />
 
 
 </RelativeLayout>

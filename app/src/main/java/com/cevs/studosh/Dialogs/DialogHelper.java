@@ -74,4 +74,9 @@ public class DialogHelper {
         mUpdateCourseDialog.show(fragmentManager ,"Update course");
     }
 
+    public void setPresenceInfoDialog(){
+        PresenceInfoDialog presenceInfoDialog = new PresenceInfoDialog();
+        presenceInfoDialog.show(fragmentManager,"Info");
+    }
+
 }

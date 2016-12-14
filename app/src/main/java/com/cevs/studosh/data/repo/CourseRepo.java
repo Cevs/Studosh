@@ -21,6 +21,7 @@ public class CourseRepo {
         return "CREATE TABLE " + Course.TABLE_Name + "("
                 + Course.COLUMN_CourseId + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + Course.COLUMN_CourseName + " TEXT, "
+                + Course.COLUMN_CourseECTS + " INTEGER, "
                 + Course.COLUMN_SemesterId + " INTEGER, "
                 + "FOREIGN KEY (" + Course.COLUMN_SemesterId + ") REFERENCES "
                 + Semester.TABLE_Name + "(" + Semester.COLUMN_SemesterId +") ON DELETE CASCADE );";
@@ -31,8 +32,8 @@ public class CourseRepo {
         SQLiteDatabase db = DataBaseManager.getInstance().openDatabase();
         ContentValues values = new ContentValues();
         values.put(Course.COLUMN_CourseName, course.getCourseName());
+        values.put(Course.COLUMN_CourseECTS, course.getCourseECTS());
         values.put(Course.COLUMN_SemesterId, course.getSemesterId());
-
         courseId =  db.insert(Course.TABLE_Name, null, values);
         DataBaseManager.getInstance().closeDatabase();
         return  courseId;
@@ -107,7 +108,8 @@ public class CourseRepo {
         ContentValues newValues = new ContentValues();
         newValues.put(Course.COLUMN_CourseName, course.getCourseName());
         newValues.put(Course.COLUMN_SemesterId, course.getSemesterId());
-
+        //Možda će trebati ipak postaviti ECTS
+        //newValues.put(Course.COLUMN_CourseECTS, course.getCourseECTS());
         if(db.update(Course.TABLE_Name,newValues, where, null)==-1){
             DataBaseManager.getInstance().closeDatabase();
             return false;
@@ -116,6 +118,16 @@ public class CourseRepo {
             DataBaseManager.getInstance().closeDatabase();
             return true;
         }
+    }
+
+    public boolean findRow(String courseName){
+        SQLiteDatabase db = DataBaseManager.getInstance().openDatabase();
+        String where = Course.COLUMN_CourseName + " = '" + courseName +"'";
+
+        Cursor c  = db.query(true,Course.TABLE_Name,Course.ALL_ROWS,where,null,null,null,null,null);
+        boolean exist = (c.getCount()>0);
+        c.close();
+        return exist;
     }
 
 }

@@ -18,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cevs.studosh.Dialogs.DialogHelper;
 import com.cevs.studosh.MainActivity;
 import com.cevs.studosh.R;
 import com.cevs.studosh.data.model.Presence;
@@ -50,7 +51,7 @@ public class PresenceFragment extends Fragment {
     String month;
     String year;
     String sdf;
-
+    Button presenceInfo;
     static final int PRESENT = 1;
     static final int ABSENT = 2;
     static final int SIGNED = 3;
@@ -97,6 +98,7 @@ public class PresenceFragment extends Fragment {
                 view = inflater.inflate(R.layout.fragment_presence,container,false);
                 compactCalendarView = (CompactCalendarView) view.findViewById(R.id.compactcalendar_view);
                 calendarTypeSpinner = (Spinner)view.findViewById(R.id.spinnerCalendar);
+                presenceInfo = (Button) view.findViewById(R.id.buttonPresenceInfo);
 
             }catch (InflateException e){
                 Toast.makeText(getContext(),e+"",Toast.LENGTH_LONG).show();
@@ -180,6 +182,14 @@ public class PresenceFragment extends Fragment {
                 selectedDate(firstDayOfNewMonth, date);
 
 
+            }
+        });
+
+        presenceInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogHelper dialogHelper = new DialogHelper();
+                dialogHelper.setPresenceInfoDialog();
             }
         });
     }
