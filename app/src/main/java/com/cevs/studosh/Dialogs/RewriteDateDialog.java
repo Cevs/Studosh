@@ -22,11 +22,11 @@ import java.io.Serializable;
  */
 
 public class RewriteDateDialog extends DialogFragment {
-    String lDate;
-    int calendarType;
-    int presenceType;
-    long foreignKey;
-    long takenRowId;
+    private String lDate;
+    private int calendarType;
+    private int presenceType;
+    private long foreignKey;
+    private long takenRowId;
 
 
 
@@ -51,7 +51,6 @@ public class RewriteDateDialog extends DialogFragment {
         lDate = presence.getDateTime();
         takenRowId = getArguments().getLong("Row Id");
 
-        long n = takenRowId;
     }
 
     @NonNull

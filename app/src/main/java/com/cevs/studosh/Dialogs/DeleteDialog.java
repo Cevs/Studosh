@@ -18,7 +18,7 @@ import com.cevs.studosh.data.repo.SemesterRepo;
 
 public class DeleteDialog extends DialogFragment {
 
-    String semester;
+    private String semester;
 
     public static DeleteDialog newInstance(String semester){
         DeleteDialog dialog = new DeleteDialog();

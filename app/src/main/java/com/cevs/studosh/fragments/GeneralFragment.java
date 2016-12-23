@@ -23,26 +23,15 @@ import com.cevs.studosh.data.repo.PresenceRepo;
  */
 
 public class GeneralFragment extends Fragment {
-    TextView name;
-    TextView semester;
-    TextView points;
-    TextView maxPoints;
-    TextView mark;
-    TextView tvSigned;
-    View view;
+    private TextView name;
+    private TextView semester;
+    private TextView points;
+    private TextView maxPoints;
+    private TextView mark;
+    private TextView tvSigned;
+    private View view;
     private long courseId;
-    CourseRepo courseRepo;
-    ContentRepo contentRepo;
-    PresenceRepo presenceRepo;
-    Cursor cursor;
-
-    String grade;
-    Double sumOfPoints;
-    Double sumOfMaxPoints;
-    int signed;
-
-
-    static final int SIGNED = 3;
+    private static final int SIGNED = 3;
 
     public GeneralFragment(){}
 
@@ -92,32 +81,32 @@ public class GeneralFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-        courseRepo = new CourseRepo();
-        cursor = courseRepo.getRow(courseId);
+        CourseRepo courseRepo = new CourseRepo();
+        Cursor cursor = courseRepo.getRow(courseId);
 
         String courseName = cursor.getString(cursor.getColumnIndex(Course.COLUMN_CourseName));
         //TREBA PROJEMNIT ODAKLE SE VUCE SEMESTAR
         //String courseSemester = cursor.getString(cursor.getColumnIndex(Course.COLUMN_Semester));
 
-        sumOfPoints = 0.0;
-        sumOfMaxPoints = 0.0;
-        signed = 0;
+        float sumOfPoints = 0;
+        float sumOfMaxPoints = 0;
+        int signed = 0;
 
-        contentRepo = new ContentRepo();
+       ContentRepo contentRepo = new ContentRepo();
         cursor = contentRepo.getAllRows(courseId);
 
         if(cursor.getCount()>0){
             cursor.moveToFirst();
 
             do{
-                sumOfPoints += cursor.getDouble(cursor.getColumnIndex(Content.COLUMN_Points));
-                sumOfMaxPoints += cursor.getDouble(cursor.getColumnIndex(Content.COLUMN_MaxPoints));
+                sumOfPoints += cursor.getFloat(cursor.getColumnIndex(Content.COLUMN_Points));
+                sumOfMaxPoints += cursor.getFloat(cursor.getColumnIndex(Content.COLUMN_MaxPoints));
             }while(cursor.moveToNext());
 
         }
         cursor.close();
 
-        presenceRepo = new PresenceRepo();
+        PresenceRepo presenceRepo = new PresenceRepo();
         //Ovo treba popraviti, treba prosljeti cType kako bi znao zbrajat izostanke bla bla bla
         cursor = presenceRepo.getAllRows(courseId, 0);
 
@@ -131,7 +120,7 @@ public class GeneralFragment extends Fragment {
         }
         cursor.close();
 
-        grade = determineGrade(sumOfPoints);
+        String grade = determineGrade(sumOfPoints);
 
         points.setText(sumOfPoints+"/");
         maxPoints.setText(sumOfMaxPoints+"");
@@ -145,7 +134,7 @@ public class GeneralFragment extends Fragment {
 
     }
 
-    String determineGrade(double points){
+    String determineGrade(float sumOfPoints){
 
         if(sumOfPoints <50)
             return("Nedovoljan(1)");

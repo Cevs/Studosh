@@ -26,18 +26,10 @@ import com.cevs.studosh.fragments.GeneralFragment;
  */
 
 public class ContentDialog extends DialogFragment {
-    LayoutInflater inflater;
-    View view;
-    Content content;
-    ContentRepo contentRepo;
-    EditText criterion;
-    EditText points;
-    EditText maxPoints;
-    long courseId;
 
-    double doublePoints;
-    double doubleMaxPoints;
-    String stringCriterion;
+    private long courseId;
+    private float floatPoints;
+    private float floatMaxPoints;
 
 
     public static ContentDialog newInstance(long id){
@@ -57,8 +49,8 @@ public class ContentDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        inflater = getActivity().getLayoutInflater();
-        view = inflater.inflate(R.layout.dialog_content,null);
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        final View view = inflater.inflate(R.layout.dialog_content,null);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view);
@@ -68,31 +60,31 @@ public class ContentDialog extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
-                criterion = (EditText) view.findViewById(R.id.eT_criterion);
-                points = (EditText) view.findViewById(R.id.eT_points);
-                maxPoints = (EditText) view.findViewById(R.id.eT_maxPoints);
+                EditText criterion = (EditText) view.findViewById(R.id.eT_criterion);
+                EditText points = (EditText) view.findViewById(R.id.eT_points);
+                EditText maxPoints = (EditText) view.findViewById(R.id.eT_maxPoints);
 
                 boolean validEntry = true;
                 boolean validPoints = true;
 
                 try{
-                    doublePoints  = Double.parseDouble(points.getText().toString());
-                    doubleMaxPoints = Double.parseDouble(maxPoints.getText().toString());
+                    floatPoints  = Float.parseFloat(points.getText().toString());
+                    floatMaxPoints = Float.parseFloat(maxPoints.getText().toString());
                 }catch (NumberFormatException e){
                     validEntry = false;
                 }
 
-                if (doubleMaxPoints<doublePoints){
+                if (floatMaxPoints<floatPoints){
                     validPoints = false;
                 }
 
-                stringCriterion = criterion.getText().toString();
+                String stringCriterion = criterion.getText().toString();
 
                 if(!TextUtils.isEmpty(stringCriterion) && validEntry && validPoints){
-                    content = new Content();
-                    contentRepo = new ContentRepo();
-                    content.setPoints(doublePoints);
-                    content.setMaxPoints(doubleMaxPoints);
+                    Content content = new Content();
+                    ContentRepo contentRepo = new ContentRepo();
+                    content.setPoints(floatPoints);
+                    content.setMaxPoints(floatMaxPoints);
                     content.setCriteria(stringCriterion);
 
                     content.setCourseId(courseId);

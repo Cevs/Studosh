@@ -15,6 +15,7 @@ import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,6 +32,7 @@ import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -79,42 +81,20 @@ import static android.webkit.ConsoleMessage.MessageLevel.LOG;
 
 public class MainActivity extends AppCompatActivity  {
 
-    android.support.v4.app.FragmentManager supportFragmentManager;
-    FragmentManager fragmentManager;
-    CourseRepo courseRepo;
-    SemesterRepo semesterRepo;
-    Semester semester;
-    Cursor cursor;
-
-
-    MyPagerAdapter mPagerAdapter;
     GeneralFragment generalFragment;
     CriteriaFragment criteriaFragment;
     PresenceFragment presenceFragment;
-    ArrayList<PagerItem> pagerItems;
-    DialogHelper mDialogHelper;
-
+    private MyPagerAdapter mPagerAdapter;
+    private DialogHelper mDialogHelper;
+    private ExpandableListAdapter expandableListAdapter;
+    private ExpandableListView expandableListView;
+    private List<String> listDataHeader;
+    private HashMap<String, List<ChildPair>> listDataChild;
+    private DrawerLayout drawer;
+    private long courseId;
+    private int type;
     private ViewPager mViewPager;
-    private NavigationTabStrip mCenterNavigationTabStrip;
-
-    ArrayList<Long> arrayOfIds;
-
-    ImageView mainItemIcon, subItemIcon1, subItemIcon2, subItemIcon3, subItemIcon4, subItemIcon5, subItemIcon6;
-    SubActionButton  subButton1, subButton2, subButton3, subButton4, subButton5,subButton6;
-    FloatingActionMenu actionMenu;
-
-    MyCriteriaListAdapter myCriteriaListAdapter;
-    ExpandableListAdapter expandableListAdapter;
-    ExpandableListView expandableListView;
-    List<String> listDataHeader;
-    HashMap<String, List<ChildPair>> listDataChild;
-    DrawerLayout drawer;
-    long courseId;
-    Course course;
-    int type;
-
-    final static int LOG_IN = 1;
-
+    private final static int LOG_IN = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,22 +107,27 @@ public class MainActivity extends AppCompatActivity  {
         DBHelper dbHelper = new DBHelper(this);
         DataBaseManager.initializeInstance(dbHelper);
 
-        semesterRepo = new SemesterRepo();
+        final SemesterRepo semesterRepo = new SemesterRepo();
+        final CourseRepo courseRepo = new CourseRepo();
 
-        fragmentManager = getFragmentManager();
-        supportFragmentManager = getSupportFragmentManager();
-        courseRepo = new CourseRepo();
-        pagerItems = new ArrayList<PagerItem>();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
 
         initUI();
 
-        mainItemIcon = new ImageView(this);
-        subItemIcon1 = new ImageView(this);
-        subItemIcon2 = new ImageView(this);
-        subItemIcon3 = new ImageView(this);
-        subItemIcon4 = new ImageView(this);
-        subItemIcon5 = new ImageView(this);
-        subItemIcon6 = new ImageView(this);
+        ImageView mainItemIcon = new ImageView(this);
+        ImageView subItemIcon1 = new ImageView(this);
+        ImageView subItemIcon2 = new ImageView(this);
+        ImageView subItemIcon3 = new ImageView(this);
+        ImageView subItemIcon4 = new ImageView(this);
+        ImageView subItemIcon5 = new ImageView(this);
+        ImageView subItemIcon6 = new ImageView(this);
 
 
 
@@ -162,21 +147,21 @@ public class MainActivity extends AppCompatActivity  {
         subItemIcon5.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.mark));
         subItemIcon6.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.cross));
 
-        subButton1 = itemBuilder.setContentView(subItemIcon1).build();
-        subButton2 = itemBuilder.setContentView(subItemIcon2).build();
-        subButton3 = itemBuilder.setContentView(subItemIcon3).build();
-        subButton4 = itemBuilder.setContentView(subItemIcon4).build();
-        subButton5 = itemBuilder.setContentView(subItemIcon5).build();
-        subButton6 = itemBuilder.setContentView(subItemIcon6).build();
+        SubActionButton subButton1 = itemBuilder.setContentView(subItemIcon1).build();
+        SubActionButton subButton2 = itemBuilder.setContentView(subItemIcon2).build();
+        SubActionButton subButton3 = itemBuilder.setContentView(subItemIcon3).build();
+        SubActionButton subButton4 = itemBuilder.setContentView(subItemIcon4).build();
+        SubActionButton subButton5 = itemBuilder.setContentView(subItemIcon5).build();
+        SubActionButton subButton6 = itemBuilder.setContentView(subItemIcon6).build();
 
 
 
-        actionMenu = new FloatingActionMenu.Builder(this).addSubActionView(subButton1).addSubActionView(subButton2)
+        FloatingActionMenu actionMenu = new FloatingActionMenu.Builder(this).addSubActionView(subButton1).addSubActionView(subButton2)
                 .addSubActionView(subButton3).addSubActionView(subButton4).addSubActionView(subButton5)
                 .addSubActionView(subButton6).attachTo(fab).setRadius(300).setStartAngle(200).setEndAngle(340).build();
 
-        //Sadly, this must be implemented this way because the developers of this library
-        //didn't create a way to find out or to set id to a buttons
+        /*Sadly, this must be implemented this way because the developers of this library
+            didn't create a way to find out or to set id to a buttons*/
         subButton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -241,47 +226,42 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
 
-
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-
         createExpandableList();
     }
 
 
     public void initUI(){
-        cursor = courseRepo.getAllRows();
+        ArrayList<PagerItem> pagerItems = new ArrayList<PagerItem>();
+        CourseRepo courseRepo = new CourseRepo();
+        Cursor cursor = courseRepo.getAllRows();
         cursor.moveToFirst();
 
+
         mViewPager = (ViewPager) findViewById(R.id.vp);
-        mPagerAdapter = new MyPagerAdapter(supportFragmentManager,pagerItems);
+        mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager(),pagerItems);
         mViewPager.setAdapter(mPagerAdapter);
-        cursor = courseRepo.getAllRows();
-        mCenterNavigationTabStrip = (NavigationTabStrip) findViewById(R.id.nts_center);
+        NavigationTabStrip mCenterNavigationTabStrip = (NavigationTabStrip) findViewById(R.id.nts_center);
         mCenterNavigationTabStrip.setViewPager(mViewPager);
         mCenterNavigationTabStrip.setStripColor(ContextCompat.getColor(getBaseContext(),R.color.navigationTabStrip));
 
+
         if(cursor.getCount()==0){
             setInitialFragments();
+
         }
         else{
             setFragments(cursor.getLong(cursor.getColumnIndex(Course.COLUMN_CourseId)));
             courseId = cursor.getLong(cursor.getColumnIndex(Course.COLUMN_CourseId));
+            setActionBar(courseId);
+
         }
+        setNumberOfCoursesAndSemesters();
         cursor.close();
 
     }
 
     public void setInitialFragments(){
-        pagerItems = new ArrayList<PagerItem>();
+        ArrayList<PagerItem> pagerItems = new ArrayList<PagerItem>();
         pagerItems.add(new PagerItem("General fragment", new InitialGeneralFragment()));
         pagerItems.add(new PagerItem("Criteria fragment", new InitialCriteriaFragment()));
         pagerItems.add(new PagerItem("Absence fragment", new InitialPresenceFragment()));
@@ -295,13 +275,14 @@ public class MainActivity extends AppCompatActivity  {
 
     //Method for refreshing fragments when old data set changed or for creating new fragments wih new data set
     public void setFragments(long position){
+
         Boolean same = false;
         if (courseId != position)
             courseId = position;
         else
             same = true;
 
-        pagerItems = new ArrayList<PagerItem>();
+        ArrayList<PagerItem> pagerItems = new ArrayList<PagerItem>();
         pagerItems.add(new PagerItem("General fragment",generalFragment.newInstance(position)));
         pagerItems.add(new PagerItem("Criteria fragment", criteriaFragment.newInstance(position)));
         pagerItems.add(new PagerItem("Absence fragment", presenceFragment.newInstance(position)));
@@ -309,6 +290,7 @@ public class MainActivity extends AppCompatActivity  {
         if(!same) {
             mViewPager.setCurrentItem(0);
         }
+        setActionBar(courseId);
         mPagerAdapter.setPagerItems(pagerItems);
         mPagerAdapter.notifyDataSetChanged();
 }
@@ -319,20 +301,20 @@ public class MainActivity extends AppCompatActivity  {
         expandableListView = (ExpandableListView) findViewById(R.id.expandable_list);
         //Set position of indicator arrow
         expandableListView.setIndicatorBounds(5,0);
-
-        Collections.sort(listDataHeader);
+        sortAscendingHeader(listDataHeader);
+        //Collections.sort(listDataHeader);
         expandableListAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
         expandableListView.setAdapter(expandableListAdapter);
         expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView expandableListView, View view, int groupPosition, int childPosition, long id) {
 
-                registerForContextMenu(expandableListView);
 
                 ChildPair object = (ChildPair) expandableListAdapter.getChild(groupPosition,childPosition);
                 view.setSelected(true);
                 drawer.closeDrawer(GravityCompat.START);
                 long row = object.getRowId();
+                setActionBar(row);
                 setFragments(row);
                 return false;
             }
@@ -349,7 +331,8 @@ public class MainActivity extends AppCompatActivity  {
         List<ChildPair> children;
         long foreignKey;
 
-        semesterRepo = new SemesterRepo();
+        SemesterRepo semesterRepo = new SemesterRepo();
+        CourseRepo courseRepo = new CourseRepo();
         Cursor semesterCursor = semesterRepo.getAllRows();
         Cursor courseCursor;
 
@@ -387,19 +370,19 @@ public class MainActivity extends AppCompatActivity  {
             courseCursor.close();
 
         }
+        setNumberOfCoursesAndSemesters();
         populateList();
     }
 
     //Inserting new element in navigationDrawerSemesterList
     //Expandable list
     public void updateNavigationDrawerSemesterList(int semesterId, String courseName, long rowId){
-        //Method for updating item in expandable list adapter that have new set of data
-        //the rest remains unchanged
-        //Its called after inserting new course in db (via courseDialog class)
+        /*Method for updating item in expandable list adapter that have new set of data
+            the rest remains unchanged
+            Its called after inserting new course in db (via courseDialog class)*/
         ChildPair pair;
         int k = 0;
         String cName = courseName;
-        Long id = rowId;
         ArrayList<ChildPair> children = new ArrayList<ChildPair>();
         //-1 because array list of headers starts with index 0 while index in db starts with 1
         int size = expandableListAdapter.getChildrenCount(semesterId);
@@ -422,26 +405,30 @@ public class MainActivity extends AppCompatActivity  {
         expandableListAdapter.newData(listDataHeader,listDataChild);
         expandableListView.setAdapter(expandableListAdapter);
         expandableListAdapter.notifyDataSetChanged();
+        setNumberOfCoursesAndSemesters();
     }
 
     //Adding the empty header of entered semester
     //Refreshing the list of semesters in navigation drawer after the entering via dialog
     public void updateNavigationDrawerHeader(String nSemester){
 
+        String string = nSemester;
         listDataHeader.add(nSemester);
         listDataChild.put(nSemester,new ArrayList<ChildPair>());
         sortAscendingHeader(listDataHeader);
         expandableListAdapter.newData(listDataHeader,listDataChild);
         expandableListView.setAdapter(expandableListAdapter);
         expandableListAdapter.notifyDataSetChanged();
-
+        setNumberOfCoursesAndSemesters();
     }
 
     public void deleteSemester(String semesterName){
-        semesterRepo = new SemesterRepo();
+        SemesterRepo semesterRepo = new SemesterRepo();
         semesterRepo.deleteRow(semesterName);
         createExpandableList();
+        setActionBar(-1);
         setInitialFragments();
+        setNumberOfCoursesAndSemesters();
     }
 
     //Updating only the specific header with changes after the deletion of course
@@ -449,8 +436,8 @@ public class MainActivity extends AppCompatActivity  {
         ChildPair pair;
         int k = 0;
         ArrayList<ChildPair> children = new ArrayList<ChildPair>();
-
-        cursor = courseRepo.getRows(foreignKey);
+        CourseRepo courseRepo = new CourseRepo();
+        Cursor cursor = courseRepo.getRows(foreignKey);
 
         int size = cursor.getCount();
 
@@ -490,17 +477,19 @@ public class MainActivity extends AppCompatActivity  {
         }
         else
             setInitialFragments();
+
+        setNumberOfCoursesAndSemesters();
     }
 
     public void updateCourse(String courseName, long id) {
-        mDialogHelper = new DialogHelper();
+        DialogHelper mDialogHelper = new DialogHelper();
         mDialogHelper.setUpdateCourseDialog(courseName, id);
 
     }
 
     @Override
     public void onBackPressed() {
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        //drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -508,9 +497,9 @@ public class MainActivity extends AppCompatActivity  {
         }
     }
 
-    //method that returns rowId of next child in list
-    //if delete item at position >1 return deletedPosition +1
-    //else return 1
+    /*method that returns rowId of next child in list
+        if delete item at position >1 return deletedPosition +1
+        else return 1*/
     public long getItemId(int groupPosition, int deletedChildPosition){
 
         int previousChild;
@@ -535,6 +524,8 @@ public class MainActivity extends AppCompatActivity  {
         Collections.sort(headers, new Comparator<String>() {
             @Override
             public int compare(String header1, String header2) {
+                /*if-else is needed because .compareToIgnoreCase evaluate string wrong if one string is longer than other
+                Especially if numbers are involved*/
                 if(header1.length()>header2.length())
                     return 1;
                 else if (header1.length()<header2.length())
@@ -550,12 +541,6 @@ public class MainActivity extends AppCompatActivity  {
         Collections.sort(children, new Comparator<ChildPair>() {
             @Override
             public int compare(ChildPair pair1, ChildPair pair2) {
-
-                if((((pair1.getName().length())>(pair2.getName().length()))))
-                    return 1;
-                else if ((((pair1.getName().length())<(pair2.getName().length()))))
-                    return -1;
-
                 return pair1.getName().compareToIgnoreCase(pair2.getName());
             }
         });
@@ -592,9 +577,6 @@ public class MainActivity extends AppCompatActivity  {
 
                 //If mobile data and wifi is turned off, turn it on
                 if (!mobileDataEnabled && !wifi.isWifiEnabled()){
-                    /*Intent intent = new Intent(Intent.ACTION_MAIN);
-                    intent.setClassName("com.android.phone","com.android.phone.NetworkSetting");
-                    startActivity(intent);*/
 
                     Intent settingsIntent = new Intent(Settings.ACTION_SETTINGS);
                     startActivityForResult(settingsIntent, 9003);
@@ -657,16 +639,11 @@ public class MainActivity extends AppCompatActivity  {
             Log.d("URL",sessionId);
             downloadData(sessionId);
         }
-
-
     }
 
     //download data from server
     public void downloadData(String id){
 
-        //Stvoriti arraylista courseva i onda provjerit da li postoje, ako postoje pokrenit dailog koji pita da li zelimo prepisa
-        //ako zelimo, prepisemo ako ne nista  ne radimo
-        //U slucaju da postoje samo ih upisemo
         ArrayList<Course> courseNames = new ArrayList<Course>();
         String url = "http://nastava-api.azurewebsites.net/api/Subjects/Actual/"+id;
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -678,20 +655,21 @@ public class MainActivity extends AppCompatActivity  {
             public void onResponse(JSONArray response) {
 
                 Log.d("VOLLEY",response.toString());
-                courseRepo = new CourseRepo();
-                semesterRepo = new SemesterRepo();
-                course = new Course();
+                CourseRepo courseRepo = new CourseRepo();
+                SemesterRepo semesterRepo = new SemesterRepo();
+                Course course = new Course();
+
                 for(int i = 0; i<response.length(); i++){
                     try {
+
                         JSONObject object = response.getJSONObject(i);
                         String courseName = object.getString("Name");
                         int semesterNumber = object.getInt("Semester");
                         int ects = object.getInt("Ects");
 
-                        course = new Course();
-                        semester = new Semester();
+                        Semester semester = new Semester();
 
-                        String semesterName = "Semester "+semesterNumber;
+                        String semesterName = "Semestar "+semesterNumber;
                         Boolean exists = semesterRepo.findRow(semesterName);
                         if(!exists){
                             semester.setSemesterName(semesterName);
@@ -705,16 +683,12 @@ public class MainActivity extends AppCompatActivity  {
 
                         exists = courseRepo.findRow(courseName);
                         if(!exists){
-
-
-                            cursor = semesterRepo.getRow(semesterName);
+                            Cursor cursor = semesterRepo.getRow(semesterName);
                             course.setSemesterId(cursor.getLong(cursor.getColumnIndex(Semester.COLUMN_SemesterId)));
                             course.setCourseName(courseName);
                             course.setCourseECTS(ects);
-
                             courseRepo.insertRow(course);
                             cursor.close();
-
                         }
                         else{
                             Log.d("VOLLEY","Već postoji");
@@ -725,11 +699,13 @@ public class MainActivity extends AppCompatActivity  {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+
                 }
                 createExpandableList();
                 progressDialog.dismiss();
 
             }
+
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -737,10 +713,7 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
 
-        /*Retry attempt 1:
-        time = time + (time * Back Off Multiplier)
-        time = 15000 + 15000 = 30000 ms
-         */
+
         int socketTimeout = 15000;
         myRequest.setRetryPolicy(new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
@@ -750,7 +723,38 @@ public class MainActivity extends AppCompatActivity  {
         myRequest.getRetryPolicy();
         queue.add(myRequest);
 
+
     }
 
+    public void setActionBar(long rowId){
+        if(rowId!=-1){
+            CourseRepo courseRepo = new CourseRepo();
+            Cursor cursor = courseRepo.getRow(rowId);
+            String courseName = cursor.getString(cursor.getColumnIndex(Course.COLUMN_CourseName));
+            getSupportActionBar().setTitle(courseName);
+        }
+        else
+        {
+            getSupportActionBar().setTitle("Studosh");
+        }
 
+    }
+
+    public void setNumberOfCoursesAndSemesters(){
+        //Navigation drawer (header)
+        CourseRepo courseRepo = new CourseRepo();
+        SemesterRepo semesterRepo = new SemesterRepo();
+
+        Cursor courseCursor = courseRepo.getAllRows();
+        Cursor courseSemester = semesterRepo.getAllRows();
+
+        int numberOfSemesters = courseCursor.getCount();
+        int numberOfCourses = courseSemester.getCount();
+
+        TextView coursesNumber = (TextView) findViewById(R.id.textView_numberOfCourses);
+        TextView semestersNumber = (TextView) findViewById(R.id.textView_numberOfSemesters);
+
+        coursesNumber.setText(numberOfCourses+"");
+        semestersNumber.setText(numberOfSemesters+"");
+    }
 }

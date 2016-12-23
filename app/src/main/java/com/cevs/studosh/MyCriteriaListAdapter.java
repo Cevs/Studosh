@@ -20,11 +20,9 @@ import java.util.ArrayList;
 
 public class MyCriteriaListAdapter extends BaseAdapter {
 
-    ArrayList<Content> array;
-    ViewHolder holder;
-
-    View rowView;
-    LayoutInflater inflater;
+    private ArrayList<Content> array;
+    private ViewHolder holder;
+    private LayoutInflater inflater;
 
     private static class ViewHolder
     {

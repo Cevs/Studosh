@@ -33,40 +33,24 @@ import java.util.Date;
 
 public class MyDateDialogPicker extends DialogFragment implements View.OnClickListener {
 
-    View view;
-    LayoutInflater inflater;
-    int day;
-    int month;
-    int year;
 
-    Boolean bPresent;
-    Boolean bAbsent;
-    Boolean bSigned;
-    Boolean bUnsigned;
-    Boolean takenDate;
-
-    Button buttonPresent;
-    Button buttonAbsent;
-    Button buttonSigned;
-    Button buttonUnsigned;
-    ImageButton buttonCancel;
-
-    DatePicker datePicker;
-    Presence presence;
-    PresenceRepo presenceRepo;
-    long foreignKey;
-    Cursor cursor;
-
-    static final int PRESENT = 1;
-    static final int ABSENT = 2;
-    static final int SIGNED = 3;
-    static final int UNSIGNED = 4;
-
-    DialogHelper dialogHelper;
-
-    Toast toast;
-    int cType;
-    long takenRowId;
+    private Boolean bPresent;
+    private Boolean bAbsent;
+    private Boolean bSigned;
+    private Boolean bUnsigned;
+    private Boolean takenDate;
+    private DatePicker datePicker;
+    private Presence presence;
+    private PresenceRepo presenceRepo;
+    private long foreignKey;
+    private DialogHelper dialogHelper;
+    private Toast toast;
+    private int cType;
+    private long takenRowId;
+    private static final int PRESENT = 1;
+    private static final int ABSENT = 2;
+    private static final int SIGNED = 3;
+    private static final int UNSIGNED = 4;
 
     public static MyDateDialogPicker newInstance(long foreignKey, int type){
         MyDateDialogPicker dialog = new MyDateDialogPicker();
@@ -92,8 +76,8 @@ public class MyDateDialogPicker extends DialogFragment implements View.OnClickLi
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        inflater  = getActivity().getLayoutInflater();
-        view = inflater.inflate(R.layout.dialog_date_picker, null);
+        LayoutInflater inflater  = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_date_picker, null);
         builder.setView(view);
 
         datePicker = (DatePicker) view.findViewById(R.id.datePicker);
@@ -104,11 +88,11 @@ public class MyDateDialogPicker extends DialogFragment implements View.OnClickLi
         bAbsent = false;
         bUnsigned = false;
 
-        buttonPresent = (Button) view.findViewById(R.id.button_present);
-        buttonSigned = (Button) view.findViewById(R.id.button_signed);
-        buttonAbsent = (Button) view.findViewById(R.id.button_absent);
-        buttonUnsigned = (Button) view.findViewById(R.id.button_unsigned);
-        buttonCancel = (ImageButton) view.findViewById(R.id.imageButton_cancel);
+        Button buttonPresent = (Button) view.findViewById(R.id.button_present);
+        Button buttonSigned = (Button) view.findViewById(R.id.button_signed);
+        Button buttonAbsent = (Button) view.findViewById(R.id.button_absent);
+        Button buttonUnsigned = (Button) view.findViewById(R.id.button_unsigned);
+        ImageButton buttonCancel = (ImageButton) view.findViewById(R.id.imageButton_cancel);
 
         buttonPresent.setOnClickListener(this);
         buttonSigned.setOnClickListener(this);
@@ -123,14 +107,12 @@ public class MyDateDialogPicker extends DialogFragment implements View.OnClickLi
     }
 
 
-    private void getDate(){
-        day = datePicker.getDayOfMonth();
-        month = datePicker.getMonth();
-        year = datePicker.getYear();
-        saveDate();
-    }
+
 
     private void saveDate(){
+        int day = datePicker.getDayOfMonth();
+        int month = datePicker.getMonth();
+        int year = datePicker.getYear();
         //because of indexing it returns month-1 so we need to add +1 to get picked month
         month = month+1;
         String sDate = year+"-"+month+"-"+day;
@@ -177,7 +159,7 @@ public class MyDateDialogPicker extends DialogFragment implements View.OnClickLi
 
 
     private boolean searchIfTaken(long time){
-        cursor = presenceRepo.getAllRows(foreignKey, cType);
+        Cursor cursor = presenceRepo.getAllRows(foreignKey, cType);
 
         while(!cursor.isAfterLast() && cursor.getCount()>0){
             long milliseconds = Long.parseLong(cursor.getString(cursor.getColumnIndex(Presence.COLUMN_DateTime)));
@@ -201,7 +183,7 @@ public class MyDateDialogPicker extends DialogFragment implements View.OnClickLi
                 bSigned = false;
                 bAbsent = false;
                 bUnsigned = false;
-                getDate();
+                saveDate();
 
             }break;
 
@@ -210,7 +192,7 @@ public class MyDateDialogPicker extends DialogFragment implements View.OnClickLi
                 bPresent = false;
                 bAbsent = false;
                 bUnsigned = false;
-                getDate();
+                saveDate();
 
             }break;
 
@@ -219,7 +201,7 @@ public class MyDateDialogPicker extends DialogFragment implements View.OnClickLi
                 bPresent = false;
                 bSigned = false;
                 bUnsigned = false;
-                getDate();
+                saveDate();
 
             }break;
 
@@ -228,7 +210,7 @@ public class MyDateDialogPicker extends DialogFragment implements View.OnClickLi
                 bPresent = false;
                 bSigned = false;
                 bAbsent = false;
-                getDate();
+                saveDate();
             }break;
 
             case R.id.imageButton_cancel:{

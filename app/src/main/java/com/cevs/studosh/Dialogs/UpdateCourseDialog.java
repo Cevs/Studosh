@@ -28,18 +28,9 @@ import com.cevs.studosh.data.repo.SemesterRepo;
  */
 
 public class UpdateCourseDialog extends DialogFragment {
-    String oldName;
-    String newName;
-    Long rowId;
-    Dialog dialog;
-    LayoutInflater inflater;
-    View view;
-    CourseRepo courseRepo;
-    Course course;
-    EditText editName;
-    Spinner spinner;
-    int semesterId;
-    Cursor cursor;
+
+    private int semesterId;
+
 
     public UpdateCourseDialog(){}
 
@@ -55,24 +46,24 @@ public class UpdateCourseDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        oldName = getArguments().getString("Name");
-        rowId = getArguments().getLong("Id");
+        final String oldName = getArguments().getString("Name");
+        final long rowId = getArguments().getLong("Id");
 
 
 
-        inflater = getActivity().getLayoutInflater();
-        view = inflater.inflate(R.layout.course_dialog,null);
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.course_dialog,null);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view);
         builder.setTitle("Ažuriraj kolegij");
 
-        editName = (EditText) view.findViewById(R.id.editText_course);
+        final EditText editName = (EditText) view.findViewById(R.id.editText_course);
         editName.setText(oldName);
 
-        spinner = (Spinner) view.findViewById(R.id.spinner);
+        Spinner spinner = (Spinner) view.findViewById(R.id.spinner);
 
         SemesterRepo semesterRepo = new SemesterRepo();
-        cursor = semesterRepo.getAllRows();
+        final Cursor cursor = semesterRepo.getAllRows();
 
         String[] semesterNames = new String[]{Semester.COLUMN_SemesterName};
 
@@ -98,9 +89,9 @@ public class UpdateCourseDialog extends DialogFragment {
         builder.setPositiveButton("Uredu", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                courseRepo = new CourseRepo();
-                course = new Course();
-                newName = editName.getText().toString();
+                CourseRepo courseRepo = new CourseRepo();
+                Course course = new Course();
+                String newName = editName.getText().toString();
                 course.setCourseName(newName);
                 course.setSemesterId(semesterId);
 
@@ -128,7 +119,7 @@ public class UpdateCourseDialog extends DialogFragment {
         });
 
 
-        dialog = builder.create();
+        Dialog dialog = builder.create();
         return dialog;
 
     }

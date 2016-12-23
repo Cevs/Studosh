@@ -17,15 +17,11 @@ import java.util.ArrayList;
  */
 
 public class AdapterData {
-    ListView listView;
-    static View view;
-    Context context;
-    Content content;
-    ContentRepo contentRepo;
-    Cursor cursor;
-    ArrayList<Content> items;
-    long courseId;
-    MyCriteriaListAdapter myCriteriaListAdapter;
+
+    private ArrayList<Content> items;
+    private long courseId;
+    private static View view;
+    private Context context;
 
     public AdapterData(View view, Context context, long courseId) {
         this.view = view;
@@ -39,25 +35,25 @@ public class AdapterData {
     }
 
     public void init(){
-        listView = (ListView)view.findViewById(R.id.list_criteria);
+        ListView listView = (ListView)view.findViewById(R.id.list_criteria);
         items = getData();
-        myCriteriaListAdapter = new MyCriteriaListAdapter(items,context);
+        MyCriteriaListAdapter myCriteriaListAdapter = new MyCriteriaListAdapter(items,context);
         myCriteriaListAdapter.notifyDataSetChanged();
         listView.setAdapter(myCriteriaListAdapter);
     }
     private ArrayList<Content> getData(){
         items = new ArrayList<Content>();
-        contentRepo = new ContentRepo();
-        cursor = contentRepo.getAllRows(courseId);
+        ContentRepo contentRepo = new ContentRepo();
+        Cursor cursor = contentRepo.getAllRows(courseId);
 
         cursor.moveToFirst();
         int n = cursor.getCount();
         if(n != 0) {
-            while (cursor.isAfterLast() == false) {
-                content = new Content();
+            while (!cursor.isAfterLast()) {
+                Content content = new Content();
                 content.setCriteria(cursor.getString(cursor.getColumnIndex(Content.COLUMN_Criteria)));
-                content.setPoints(cursor.getDouble(cursor.getColumnIndex(Content.COLUMN_Points)));
-                content.setMaxPoints(cursor.getDouble(cursor.getColumnIndex(Content.COLUMN_MaxPoints)));
+                content.setPoints(cursor.getFloat(cursor.getColumnIndex(Content.COLUMN_Points)));
+                content.setMaxPoints(cursor.getFloat(cursor.getColumnIndex(Content.COLUMN_MaxPoints)));
                 content.setCourseId(cursor.getLong(cursor.getColumnIndex(Content.COLUMN_fk_CourseId)));
 
                 cursor.moveToNext();

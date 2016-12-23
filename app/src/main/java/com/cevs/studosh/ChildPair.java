@@ -5,7 +5,7 @@ package com.cevs.studosh;
  */
 
 public class ChildPair {
-
+    //Contains the name of course and the ID in database
     private String name;
     private long rowId;
 

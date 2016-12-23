@@ -38,26 +38,20 @@ import java.util.List;
 
 public class CourseDialog extends DialogFragment {
 
-    LayoutInflater inflater;
-    View view;
-    Course course;
-    EditText courseName;
-    Spinner spinner;
 
-    long semesterId;
-    long spinnerId;
-    String name;
-    Semester semester;
+    private long semesterId;
+    private long spinnerId;
+    private String name;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        inflater = getActivity().getLayoutInflater();
-        view = inflater.inflate(R.layout.course_dialog,null);
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.course_dialog,null);
 
-        courseName = (EditText) view.findViewById(R.id.editText_course);
+        final EditText courseName = (EditText) view.findViewById(R.id.editText_course);
 
-        spinner = (Spinner) view.findViewById(R.id.spinner);
+        Spinner spinner = (Spinner) view.findViewById(R.id.spinner);
 
         SemesterRepo semesterRepo = new SemesterRepo();
         Cursor cursor = semesterRepo.getAllRows();
@@ -66,8 +60,8 @@ public class CourseDialog extends DialogFragment {
         final ArrayList<Semester> listOfSemesters = new ArrayList<Semester>();
 
         do{
-            semester = new Semester();
-            String name = cursor.getString(cursor.getColumnIndex(Semester.COLUMN_SemesterName));
+            Semester semester = new Semester();
+            name = cursor.getString(cursor.getColumnIndex(Semester.COLUMN_SemesterName));
             Long id = cursor.getLong(cursor.getColumnIndex(Semester.COLUMN_SemesterId));
 
             semester.setId(id);
@@ -120,7 +114,7 @@ public class CourseDialog extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
-                course = new Course();
+                Course course = new Course();
                 CourseRepo courseRepo = new CourseRepo();
 
                 course.setSemesterId(semesterId);

@@ -16,8 +16,8 @@ public class Content {
 
     private long id;
     private String criteria;
-    private double points;
-    private double maxPoints;
+    private float points;
+    private float maxPoints;
     private long foreignKey;
 
     public long getContentId(){return id;}
@@ -30,11 +30,11 @@ public class Content {
 
     public double getPoints(){return points;}
 
-    public void setPoints(double points){this.points = points;}
+    public void setPoints(float points){this.points = points;}
 
-    public double getMaxPoints(){return maxPoints;}
+    public float getMaxPoints(){return maxPoints;}
 
-    public void setMaxPoints(double maxPoints){this.maxPoints = maxPoints;}
+    public void setMaxPoints(float maxPoints){this.maxPoints = maxPoints;}
 
     public long getCourseId(){return foreignKey;}
 

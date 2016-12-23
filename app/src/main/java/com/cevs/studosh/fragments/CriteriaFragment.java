@@ -35,22 +35,14 @@ import java.util.ArrayList;
 
 public class CriteriaFragment extends Fragment {
 
-    ListView lv;
-    View view;
-    MyCriteriaListAdapter myCriteriaListAdapter;
-    long courseId;
-    ContentRepo contentRepo;
-    Content content;
-    Cursor cursor;
-    ArrayList<Content> arrayList;
-    AdapterData adapterData;
-    String title;
-    DialogHelper dialogHelper;
-
-
-    long position;
-    String[] menuItems;
-    ArrayList<Long> arrayOfContentIds;
+    private View view;
+    private long courseId;
+    private ContentRepo contentRepo;
+    private Cursor cursor;
+    private AdapterData adapterData;
+    private String title;
+    private DialogHelper dialogHelper;
+    private ArrayList<Long> arrayOfContentIds;
 
     public static CriteriaFragment newInstance(long rowId){
         CriteriaFragment fragment = new CriteriaFragment();
@@ -109,14 +101,14 @@ public class CriteriaFragment extends Fragment {
         v.setSelected(true);
 
         if (v.getId() == R.id.list_criteria);{
-            menuItems = new String[]{};
+            String[] menuItems = new String[]{};
             contentRepo = new ContentRepo();
 
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 
             cursor = contentRepo.getAllRows(courseId);
             cursor.moveToFirst();
-            position = info.id;
+            final long position = info.id;
             int p = 0;
             while(p++!=position){
                 cursor.moveToNext();

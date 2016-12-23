@@ -32,13 +32,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     // child data in format of header title, child title
     //private  HashMap<String, List<String>> listDataChild;
     private HashMap<String, List<ChildPair>> listDataChild;
-    ImageButton imageButtonDelete;
-    ImageButton imageButtonRename;
-    ImageButton imageButtonDeleteSemester;
-    ChildPair object;
-    String childText;
-    String courseName;
-    long id;
+    private ImageButton imageButtonDelete;
+    private ImageButton imageButtonRename;
+    private ImageButton imageButtonDeleteSemester;
+    private ChildPair object;
 
 
 
@@ -115,7 +112,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
 
-
         if(convertView == null){
             LayoutInflater inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.list_item,null);
@@ -131,8 +127,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             @Override
             public void onClick(View view) {
                 object = (ChildPair) getChild(groupPosition,childPosition);
-                id = object.getRowId();
-                courseName = object.getName();
+                long id = object.getRowId();
+                String courseName = object.getName();
 
                 CourseRepo courseRepo = new CourseRepo();
                 Cursor cursor  = courseRepo.getRow(id);
@@ -150,8 +146,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             @Override
             public void onClick(View view) {
                 object = (ChildPair) getChild(groupPosition,childPosition);
-                id = object.getRowId();
-                courseName = object.getName();
+                long id = object.getRowId();
+                String courseName = object.getName();
                 ((MainActivity)context).updateCourse(courseName,id);
 
 
@@ -159,7 +155,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         });
 
         object = (ChildPair) getChild(groupPosition,childPosition);
-        childText = object.getName();
+        String childText = object.getName();
         TextView childName = (TextView) convertView.findViewById(R.id.expandable_list_item);
         childName.setText(childText);
         return convertView;

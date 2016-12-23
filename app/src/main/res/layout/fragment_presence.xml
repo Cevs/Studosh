@@ -42,12 +42,12 @@
             android:paddingRight="10dp"
             android:paddingLeft="10dp"
             android:layout_height="250dp"
-            app:compactCalendarBackgroundColor="@color/white"
+            app:compactCalendarBackgroundColor="@color/black"
             app:compactCalendarTextSize="17sp"
-            app:compactCalendarTextColor="@color/black"
+            app:compactCalendarTextColor="@color/white"
             app:compactCalendarCurrentSelectedDayBackgroundColor="@color/generalFragmentItemSecondary"
             app:compactCalendarCurrentDayBackgroundColor="@color/navigationTabStrip"
-            app:compactCalendarMultiEventIndicatorColor="#000000"/>
+            app:compactCalendarMultiEventIndicatorColor="@color/white" />
     </FrameLayout>
 
     <Button

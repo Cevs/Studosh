@@ -13,9 +13,9 @@ import com.cevs.studosh.data.model.Presence;
  */
 
 public class DialogHelper {
-    static FragmentManager fragmentManager;
-    Context context;
-    long courseId;
+    private static FragmentManager fragmentManager;
+    private Context context;
+    private long courseId;
 
 
     public DialogHelper(Context context, FragmentManager fragmentManager) {

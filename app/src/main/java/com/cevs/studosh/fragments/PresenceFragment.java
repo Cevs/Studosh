@@ -38,32 +38,22 @@ import static android.R.attr.type;
  */
 
 public class PresenceFragment extends Fragment {
-    View view;
+    private View view;
     private long foreignKey;
-    TextView date;
-    PresenceRepo presenceRepo;
-    Cursor cursor;
-    ArrayList<String> dates;
-    ArrayList<Event> events;
-    ArrayList<Integer> colors;
-    int color;
-    String day;
-    String month;
-    String year;
-    String sdf;
-    Button presenceInfo;
-    static final int PRESENT = 1;
-    static final int ABSENT = 2;
-    static final int SIGNED = 3;
-    static final int UNSIGNED = 4;
-
-    CompactCalendarView compactCalendarView;
-
-    Date currentDate;
-
-    Spinner calendarTypeSpinner;
-
-    int cType;
+    private PresenceRepo presenceRepo;
+    private Cursor cursor;
+    private ArrayList<String> dates;
+    private ArrayList<Integer> colors;
+    private int color;
+    private Button presenceInfo;
+    private static final int PRESENT = 1;
+    private static final int ABSENT = 2;
+    private static final int SIGNED = 3;
+    private static final int UNSIGNED = 4;
+    private CompactCalendarView compactCalendarView;
+    private Date currentDate;
+    private Spinner calendarTypeSpinner;
+    private int cType;
 
     public static PresenceFragment newInstance(long foreignKey){
         PresenceFragment fragment = new PresenceFragment();
@@ -118,8 +108,10 @@ public class PresenceFragment extends Fragment {
         // 2 - Obrub
         // 3 - tocka
 
+
         compactCalendarView.setEventIndicatorStyle(2);
 
+        //compactCalendarView.setCurrentDayBackgroundColor(R.color.navigationTabStrip);
         String[] daysOfTheWeek = getResources().getStringArray(R.array.daysOfWeek);
         final String[] calendarTypes = getResources().getStringArray(R.array.calendarTypes);
         compactCalendarView.setDayColumnNames(daysOfTheWeek);
@@ -149,15 +141,15 @@ public class PresenceFragment extends Fragment {
             }
         });
 
-        date = (TextView) view.findViewById(R.id.date);
+        final TextView date = (TextView) view.findViewById(R.id.date);
 
         //Novo
         if(currentDate != null){
             compactCalendarView.setCurrentDate(currentDate);
-            sdf  = new SimpleDateFormat("dd.MM.yyyy.").format(currentDate);
+            String sdf  = new SimpleDateFormat("dd.MM.yyyy.").format(currentDate);
             date.setText(sdf);
         }else{
-            sdf  = new SimpleDateFormat("dd.MM.yyyy.").format(new Date());
+            String sdf  = new SimpleDateFormat("dd.MM.yyyy.").format(new Date());
             date.setText(sdf);
         }
 
@@ -229,9 +221,7 @@ public class PresenceFragment extends Fragment {
 
     public void getEvents(){
         compactCalendarView.removeAllEvents();
-        events = new ArrayList<Event>();
-        int m = dates.size();
-        int n = colors.size();
+        ArrayList<Event> events = new ArrayList<Event>();
         for(int i = 0; i<dates.size();i++){
             long milliseconds = Long.parseLong(dates.get(i));
             color  = colors.get(i);
@@ -244,9 +234,9 @@ public class PresenceFragment extends Fragment {
 
 
     public void selectedDate(Date date, TextView textView){
-        day = (String) android.text.format.DateFormat.format("dd",date);
-        month = (String) android.text.format.DateFormat.format("MM", date);
-        year =  (String) android.text.format.DateFormat.format("yyyy", date);
+        String day = (String) android.text.format.DateFormat.format("dd",date);
+        String month = (String) android.text.format.DateFormat.format("MM", date);
+        String year =  (String) android.text.format.DateFormat.format("yyyy", date);
         textView.setText(day+"."+month+"."+year+".");
     }
 

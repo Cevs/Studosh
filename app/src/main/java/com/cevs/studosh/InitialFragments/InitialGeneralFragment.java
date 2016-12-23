@@ -14,14 +14,14 @@ import com.cevs.studosh.R;
  */
 
 public class InitialGeneralFragment extends Fragment {
-    View view;
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
 
-        view = inflater.inflate(R.layout.initial_fragment_general,container,false);
+        View view = inflater.inflate(R.layout.initial_fragment_general,container,false);
 
         return view;
     }

@@ -52,6 +52,7 @@ public class FoiLogIn extends AppCompatActivity {
                 Log.d("URL", url);
                 if (url.contains("ajaxSuccess")){
                     String sessionId = url.split("=")[1];
+                    Log.d("SessionId",sessionId);
                     webView.setVisibility(View.GONE);
                     Intent output = new Intent();
                     output.putExtra("SESSIONID",sessionId);

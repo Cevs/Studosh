@@ -18,21 +18,21 @@
         android:orientation="horizontal">
 
         <TextView
-            android:text="Broj semestara:"
+            android:text="Kolegiji:"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/textView6"
             android:layout_weight="1"
-            android:textSize="15sp"
+            android:textSize="18sp"
             android:fontFamily="sans-serif-medium"/>
 
         <TextView
-            android:text="5"
+
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/textView5"
+            android:id="@+id/textView_numberOfCourses"
             android:layout_weight="1"
-            android:textSize="15sp"
+            android:textSize="18sp"
             android:fontFamily="sans-serif-medium"/>
 
     </LinearLayout>
@@ -42,21 +42,20 @@
         android:orientation="horizontal">
 
         <TextView
-            android:text="Broj semestara:"
+            android:text="Semestri:"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/textView8"
             android:layout_weight="1"
-            android:textSize="15sp"
+            android:textSize="18sp"
             android:fontFamily="sans-serif-medium"/>
 
         <TextView
-            android:text="10"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/textView9"
+            android:id="@+id/textView_numberOfSemesters"
             android:layout_weight="1"
-            android:textSize="15sp"
+            android:textSize="18sp"
             android:fontFamily="sans-serif-medium"/>
 
     </LinearLayout>

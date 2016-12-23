@@ -28,20 +28,7 @@ import java.util.zip.Inflater;
  */
 
 public class UpdateContentDialog extends DialogFragment {
-    View view;
-    LayoutInflater inflater;
-    EditText criterion;
-    EditText points;
-    EditText maxPoints;
-    long courseId;
-    String newCriterion;
-    double dPoints;
-    double dMaxPoints;
-    String oldCriterion;
-    ContentRepo contentRepo;
-    Cursor cursor;
-    Content content;
-    Dialog dialog;
+
 
 
 
@@ -58,21 +45,20 @@ public class UpdateContentDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         DataBaseManager.getInstance().openDatabase();
-        inflater = getActivity().getLayoutInflater();
-        view = inflater.inflate(R.layout.dialog_content,null);
-        courseId = getArguments().getLong("Id");
-        oldCriterion = getArguments().getString("Criterion");
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_content,null);
+        final long courseId = getArguments().getLong("Id");
+        final String oldCriterion = getArguments().getString("Criterion");
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view);
         builder.setTitle("Ažuriraj kriterij");
 
-        criterion = (EditText)view.findViewById(R.id.eT_criterion);
-        points = (EditText)view.findViewById(R.id.eT_points);
-        maxPoints = (EditText)view.findViewById(R.id.eT_maxPoints);
-
-        contentRepo = new ContentRepo();
-        cursor = contentRepo.getRow(courseId,oldCriterion);
+        final EditText criterion = (EditText)view.findViewById(R.id.eT_criterion);
+        final EditText points = (EditText)view.findViewById(R.id.eT_points);
+        final EditText maxPoints = (EditText)view.findViewById(R.id.eT_maxPoints);
+        final ContentRepo contentRepo = new ContentRepo();
+        Cursor cursor = contentRepo.getRow(courseId,oldCriterion);
 
         criterion.setText(cursor.getString(cursor.getColumnIndex(Content.COLUMN_Criteria)));
         points.setText(cursor.getDouble(cursor.getColumnIndex(Content.COLUMN_Points))+"");
@@ -82,11 +68,11 @@ public class UpdateContentDialog extends DialogFragment {
         builder.setPositiveButton("Ažuriraj", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                newCriterion = criterion.getText().toString();
-                dPoints = Double.parseDouble(points.getText().toString());
-                dMaxPoints = Double.parseDouble(maxPoints.getText().toString());
+                String newCriterion = criterion.getText().toString();
+                float  dPoints = Float.parseFloat(points.getText().toString());
+                float  dMaxPoints = Float.parseFloat(maxPoints.getText().toString());
 
-                content = new Content();
+                Content content = new Content();
                 content.setCriteria(newCriterion);
                 content.setPoints(dPoints);
                 content.setMaxPoints(dMaxPoints);
@@ -115,7 +101,7 @@ public class UpdateContentDialog extends DialogFragment {
         });
 
         DataBaseManager.getInstance().closeDatabase();
-        dialog = builder.create();
+        Dialog dialog = builder.create();
         return dialog;
 
 

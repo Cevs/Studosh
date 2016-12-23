@@ -29,9 +29,8 @@ import java.util.List;
 
 public class SemesterDialog extends DialogFragment {
 
-    LayoutInflater inflater;
-    View view;
-    EditText semester;
+
+
 
 
 
@@ -39,8 +38,8 @@ public class SemesterDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        inflater = getActivity().getLayoutInflater();
-        view = inflater.inflate(R.layout.dialog_semester,null);
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        final View view = inflater.inflate(R.layout.dialog_semester,null);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view);
@@ -56,10 +55,10 @@ public class SemesterDialog extends DialogFragment {
                 String nSemester;
                 String sSemester;
 
-                semester = (EditText)view.findViewById(R.id.editText_dialogSemester_semester);
+                EditText etSemester = (EditText)view.findViewById(R.id.editText_dialogSemester_semester);
                 boolean bSemester = true;
 
-                nSemester = semester.getText().toString();
+                nSemester = etSemester.getText().toString();
 
                 if(TextUtils.isEmpty(nSemester)){
                     bSemester = false;
@@ -92,7 +91,7 @@ public class SemesterDialog extends DialogFragment {
                 else{
                     //http://stackoverflow.com/questions/13508270/android-seterrorerror-not-working-in-textview
                     //Look for solution
-                    semester.setError("The semester cannot be empty");
+                    etSemester.setError("The semester cannot be empty");
                     Toast.makeText(getActivity(),"Unesite sve podatke",Toast.LENGTH_SHORT).show();
                 }
 
