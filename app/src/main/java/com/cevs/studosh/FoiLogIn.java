@@ -1,26 +1,17 @@
 package com.cevs.studosh;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.ConnectivityManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 
-import java.lang.reflect.Method;
 
 /**
  * Created by TOSHIBA on 03.12.2016..
@@ -37,7 +28,6 @@ public class FoiLogIn extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //CookieManager.setAcceptFileSchemeCookies(true);
         webView = new WebView(getBaseContext());
         setContentView(webView);
         progressDialog = ProgressDialog.show(FoiLogIn.this, "Redirecting to Foi", "Please wait...", true);
@@ -74,7 +64,6 @@ public class FoiLogIn extends AppCompatActivity {
         webView.loadUrl(url);
 
     }
-
 
     /*When back button is pressed, finish this activity and return RESULT_CANCELED
     so that Main Activity know to not start downloading data from server*/

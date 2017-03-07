@@ -33,7 +33,7 @@
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
 
             <FrameLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:background="@color/mainColor">
@@ -41,7 +41,7 @@
                 <com.gigamole.navigationtabstrip.NavigationTabStrip
                     android:id="@+id/nts_center"
                     android:layout_width="match_parent"
-                    android:layout_height="42dp"
+                    android:layout_height="40dp"
                     android:layout_gravity="center"
                     android:layout_marginEnd="30dp"
                     android:layout_marginLeft="30dp"

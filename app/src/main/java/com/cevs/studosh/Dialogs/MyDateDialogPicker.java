@@ -1,10 +1,8 @@
 package com.cevs.studosh.Dialogs;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,14 +16,10 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.cevs.studosh.MainActivity;
+import com.cevs.studosh.ConvertIntoMilliseconds;
 import com.cevs.studosh.R;
 import com.cevs.studosh.data.model.Presence;
 import com.cevs.studosh.data.repo.PresenceRepo;
-import com.cevs.studosh.fragments.PresenceFragment;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * Created by TOSHIBA on 21.11.2016..
@@ -115,9 +109,8 @@ public class MyDateDialogPicker extends DialogFragment implements View.OnClickLi
         int year = datePicker.getYear();
         //because of indexing it returns month-1 so we need to add +1 to get picked month
         month = month+1;
-        String sDate = year+"-"+month+"-"+day;
-        long lDateMilliseconds = milliseconds(sDate);
-        sDate = day+"."+month+"."+year;
+        long lDateMilliseconds = new ConvertIntoMilliseconds(day,month,year).getMillisecodns();
+        String sDate = day+"."+month+"."+year;
 
         presence = new Presence();
         presenceRepo = new PresenceRepo();
@@ -140,21 +133,6 @@ public class MyDateDialogPicker extends DialogFragment implements View.OnClickLi
 
         //refresh viewpager after changing
         //((MainActivity)getActivity()).setFragments(foreignKey);
-    }
-
-
-    //Converting date in milliseconds so it could be stored in DB
-    private long milliseconds(String date){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        try{
-            Date mDate = sdf.parse(date);
-            long timeInMilliseconds = mDate.getTime();
-            return timeInMilliseconds;
-        }
-        catch (ParseException e){
-
-        }
-        return 0;
     }
 
 

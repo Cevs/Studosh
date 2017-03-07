@@ -676,7 +676,6 @@ public class MainActivity extends AppCompatActivity  {
                             semesterRepo.insertRow(semester);
                         }
 
-
                         Log.d("VOLLEY", courseName);
                         Log.d("VOLLEY",semesterName);
                         Log.d("VOLLEY",ects+"");
@@ -694,12 +693,9 @@ public class MainActivity extends AppCompatActivity  {
                             Log.d("VOLLEY","Već postoji");
                         }
 
-
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
                 }
                 createExpandableList();
                 progressDialog.dismiss();
@@ -713,7 +709,6 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
 
-
         int socketTimeout = 15000;
         myRequest.setRetryPolicy(new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
@@ -722,7 +717,6 @@ public class MainActivity extends AppCompatActivity  {
         Log.d("Socket",myRequest.getRetryPolicy().getCurrentTimeout()+"");
         myRequest.getRetryPolicy();
         queue.add(myRequest);
-
 
     }
 
